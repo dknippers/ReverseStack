@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyName>SmartStack</AssemblyName>
@@ -6,6 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Set Stacklands Directories">
+    <StacklandsSteamId>1948280</StacklandsSteamId>
+    <StacklandsDataDir>$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App $(StacklandsSteamId)', 'InstallLocation', null, RegistryView.Registry64, RegistryView.Registry32))</StacklandsDataDir>
+    <StacklandsDataDir Condition="'$(StacklandsDataDir)' == ''">$([MSBuild]::GetRegistryValueFromView('HKEY_CURRENT_USER\SOFTWARE\Valve\Steam', 'SteamPath', null, RegistryView.Registry32))\steamapps\common\Stacklands</StacklandsDataDir>
+    <StacklandsLocalModDir>$(LocalAppData)Low\sokpop\Stacklands\Mods\$(AssemblyName)</StacklandsLocalModDir>
+    <StacklandsDataDir>$(StacklandsDataDir)\Stacklands_Data</StacklandsDataDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +31,12 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="SmartDrop_CopyToLocalModDirectory" AfterTargets="AfterBuild">
+  <Target Name="SmartStack_Variables" BeforeTargets="BeforeBuild">
+    <Message Importance="High" Text="Game: $(StacklandsDataDir)" />
+    <Message Importance="High" Text="Mod: $(StacklandsLocalModDir)" />
+  </Target>
+
+  <Target Name="SmartStack_CopyToLocalModDirectory" AfterTargets="AfterBuild">    
     <MakeDir Directories="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="manifest.json" DestinationFolder="$(StacklandsLocalModDir)" />
