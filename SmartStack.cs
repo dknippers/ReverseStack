@@ -10,7 +10,7 @@ namespace SmartStack
         {
             ModLogger = Logger;
 
-            Harmony.PatchAll(typeof(Patches.DropResourcesOnVillager));
+            Harmony.PatchAll();
         }
     }
 }

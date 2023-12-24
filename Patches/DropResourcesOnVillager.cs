@@ -2,6 +2,7 @@ using HarmonyLib;
 
 namespace SmartStack.Patches;
 
+[HarmonyPatch]
 public static class DropResourcesOnVillager
 {
     [HarmonyPostfix]
