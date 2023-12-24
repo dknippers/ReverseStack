@@ -27,7 +27,8 @@ public static class DebugDisplay
         if (card is null) return "<NULL>";
 
         var name = card.CardData.Name;
+        var id = card.GetInstanceID();
 
-        return new StringBuilder("[ ").Append(name).Append(" ]").ToString();
+        return new StringBuilder("[ ").Append(name).Append(" | ").Append(id).Append(" ]").ToString();
     }
 }
