@@ -1,0 +1,6 @@
+<Project>
+    <PropertyGroup Label="Update these for your environment">
+        <StacklandsDataDir>C:\Program Files (x86)\Steam\steamapps\common\Stacklands\Stacklands_Data</StacklandsDataDir>
+        <StacklandsLocalModDir>$(LocalAppData)Low\sokpop\Stacklands\Mods\$(AssemblyName)</StacklandsLocalModDir>
+    </PropertyGroup>
+</Project>
