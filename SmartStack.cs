@@ -1,16 +1,15 @@
 using HarmonyLib;
 
-namespace SmartStack
+namespace SmartStack;
+
+public class SmartStack : Mod
 {
-    public class SmartStack : Mod
+    internal static ModLogger ModLogger { get; private set; } = null!;
+
+    public override void Ready()
     {
-        internal static ModLogger ModLogger { get; private set; } = null!;
+        ModLogger = Logger;
 
-        public override void Ready()
-        {
-            ModLogger = Logger;
-
-            Harmony.PatchAll();
-        }
+        Harmony.PatchAll();
     }
 }
