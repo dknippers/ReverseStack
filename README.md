@@ -1,16 +1,14 @@
 # ReverseStack
 
-> CURRENTLY IN DEVELOPMENT, NOT YET FUNCTIONAL.
+A Stacklands mod that enables stacking cards to the bottom of an existing stack rather than the top.
 
-A Stacklands mod that improves stacking cards in various scenarios:
+This is mainly useful to add cards to stacks that are being worked on by a Villager, e.g. Apple Trees and Berry Bushes.
 
--   It is now possible to drop a Structure card (e.g. Apple Tree, Rock) on top of a Villager.
+With this mod you can now simply drag the new card to the existing stack and it will be added to the bottom since it cannot be added
+on top of the Villager.
 
-    -   This is possible in all cases where the game currently allows dropping a Villager on top of that Structure (or stack of Structures).
-    -   The Structure will be placed underneath the Villager, i.e. the final stack will be equivalent to when the Villager would have been placed on top of the Structure.
+The game already allows this operation manually if you move the Villager stack on top of the new card, this mod simply makes it
+more user friendly by making this happen whenever stacking on top is not possible.
 
--   It is now possible to add a Structure card X to a stack that consists entirely of other X cards with a Villager on top.
-
-    -   For example, if you have a stack of Apple Trees that is being harvested by a Villager you can now add another Apple Tree to that stack by simply dropping it on the existing stack. The base game does not support this scenario and only allows the reverse: grabbing the stack that is being worked on and dropping it on the new Apple Tree. This mod simply makes both directions work.
-
--   When a card is created and cannot find a nearby space or stack to add itself to that card will now be moved to the nearest free space on the board regardless how far away it is. Currently such cards will start floating around, pushing all nearby cards away which creates a mess on the board.
+Note this never allows an illegal stack to be created, any stack created by a Reverse Stack is possible to create manually.
+Basically, when dragging stack A on top of stack B a Reverse Stack in that situation is equivalent to stacking B on top of A.
