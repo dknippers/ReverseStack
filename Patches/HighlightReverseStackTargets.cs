@@ -19,9 +19,8 @@ public static class HighlightReverseStackTargets
             card.HighlightRectangle.enabled ||
             WorldManager.instance.DraggingCard is not GameCard draggingCard ||
             !card.IsRoot() ||
-            card.IsSameStack(draggingCard) ||
-            card.GetLeafCard().HighlightActive ||
-            !draggingCard.CanHaveOnTop(card))
+            card.CanHaveOnTop(draggingCard) ||
+            !draggingCard.AllowsReverseStackOn(card))
         {
             return;
         }

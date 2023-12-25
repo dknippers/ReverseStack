@@ -3,6 +3,8 @@ internal static class GameCardExtensions
 {
     /// <summary>
     /// Indicates if this stack can have the other stack on top, i.e. if the root of <paramref name="other"/> can be placed on the leaf of <paramref name="card"/>.
+    /// This is similar to the built-in <see cref="CardData.CanHaveCardOnTop(CardData, bool)"/> except we also consider status cards in the stack of <paramref name="card"/>,
+    /// which the game implements in a separate method <see cref="CardData.CanHaveCardsWhileHasStatus()"/>.
     /// </summary>
     /// <param name="card">This card / stack</param>
     /// <param name="other">The other card / stack</param>
@@ -12,7 +14,22 @@ internal static class GameCardExtensions
         var leaf = card.GetLeafCard();
         var root = other.GetRootCard();
 
-        return leaf.CardData.CanHaveCardOnTop(root.CardData);
+        if (!leaf.CardData.CanHaveCardOnTop(root.CardData))
+        {
+            return false;
+        }
+
+        // The CanHaveCardOnTop method does not check for status cards for some reason
+        // so we perform that check here to ensure `card` allows `other` to be placed on top of it.
+        if (card.GetCardWithStatusInStack() is GameCard statusCard &&
+           !statusCard.CardData.CanHaveCardsWhileHasStatus())
+        {
+            // Certain cards do not allow any cards to be placed on them when any card in the stack
+            // has a status effect running right now.
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -48,7 +65,7 @@ internal static class GameCardExtensions
     /// <returns></returns>
     internal static bool AllowsReverseStackOn(this GameCard card, GameCard other)
     {
-        if(card.CardData is Equipable || other.CardData is Equipable)
+        if (card.CardData is Equipable || other.CardData is Equipable)
         {
             // We can never use Reverse Stack when Equipables are involved.
             return false;

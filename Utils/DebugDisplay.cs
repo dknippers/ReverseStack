@@ -12,7 +12,7 @@ public static class DebugDisplay
 
         var sb = new StringBuilder("\n");
 
-        foreach(var card in stack.GetAllCardsInStack())
+        foreach (var card in stack.GetAllCardsInStack())
         {
             sb.Append(CARD_PREFIX).Append(Card(card));
         }

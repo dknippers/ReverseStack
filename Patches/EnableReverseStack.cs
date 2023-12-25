@@ -32,10 +32,6 @@ public static class EnableReverseStack
     [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.CheckIfCanAddOnStack))]
     public static void WorldManager_CheckIfCanAddOnStack(GameCard topCard, ref bool __result)
     {
-#if DEBUG
-        SmartStack.ModLogger.Log($"Stack: {DebugDisplay.Stack(topCard)}");
-#endif
-
         if (__result || topCard?.CardData is null)
         {
             return;
@@ -62,5 +58,5 @@ public static class EnableReverseStack
 #endif
 
         __result = true;
-    }    
+    }
 }
