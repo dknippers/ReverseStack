@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Label="Set Stacklands Directories">
@@ -41,7 +41,7 @@
     <Message Importance="High" Text="Mod: $(StacklandsLocalModDir)" />
   </Target>
 
-  <Target Name="ReverseStack_CopyToLocalModDirectory" AfterTargets="AfterBuild">    
+  <Target Name="ReverseStack_CopyToLocalModDirectory" AfterTargets="AfterBuild">
     <MakeDir Directories="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="manifest.json" DestinationFolder="$(StacklandsLocalModDir)" />
