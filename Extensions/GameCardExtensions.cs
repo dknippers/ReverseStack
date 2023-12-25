@@ -39,6 +39,24 @@ internal static class GameCardExtensions
         return false;
     }
 
+    /// <summary>
+    /// Indicates if <paramref name="card"/> allows a Reverse Stack operation with <paramref name="other"/>,
+    /// i.e. whether <paramref name="other"/> can be stacked on top of <paramref name="card"/>.
+    /// </summary>
+    /// <param name="card">Card</param>
+    /// <param name="other">Other card</param>
+    /// <returns></returns>
+    internal static bool AllowsReverseStackOn(this GameCard card, GameCard other)
+    {
+        if(card.CardData is Equipable || other.CardData is Equipable)
+        {
+            // We can never use Reverse Stack when Equipables are involved.
+            return false;
+        }
+
+        return !card.IsSameStack(other) && card.CanHaveOnTop(other);
+    }
+
     internal static bool IsRoot(this GameCard card) => card.Parent is null;
     internal static bool IsLeaf(this GameCard card) => card.Child is null;
 }

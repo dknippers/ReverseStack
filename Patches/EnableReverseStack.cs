@@ -26,7 +26,7 @@ namespace SmartStack.Patches;
 /// This patch will do exactly that; it will attempt a reverse stack of Y on top of X when the regular stack (X on top of Y) has failed.
 /// </summary>
 [HarmonyPatch]
-public static class AttemptReverseStackAfterFailedStack
+public static class EnableReverseStack
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.CheckIfCanAddOnStack))]
@@ -44,7 +44,7 @@ public static class AttemptReverseStackAfterFailedStack
         var inputLeaf = topCard.GetLeafCard();
         var targetRoot = topCard.GetOverlappingCards()
             .Where(card => card.IsRoot())
-            .FirstOrDefault(AllowsReverseStack);            
+            .FirstOrDefault(topCard.AllowsReverseStackOn);
 
         if (targetRoot is null)
         {
@@ -62,10 +62,5 @@ public static class AttemptReverseStackAfterFailedStack
 #endif
 
         __result = true;
-
-        bool AllowsReverseStack(GameCard card)
-        {
-            return !topCard.IsSameStack(card) && topCard.CanHaveOnTop(card);
-        }
     }    
 }
