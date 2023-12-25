@@ -65,9 +65,9 @@ internal static class GameCardExtensions
     /// <returns></returns>
     internal static bool AllowsReverseStackOn(this GameCard card, GameCard other)
     {
-        if (card.CardData is Equipable || other.CardData is Equipable)
+        if (card.IsEquipped || other.IsEquipped)
         {
-            // We can never use Reverse Stack when Equipables are involved.
+            // We can never use Reverse Stack on cards that are currently equipped.
             return false;
         }
 
