@@ -6,7 +6,7 @@ namespace SmartStack.Patches;
 
 /// <summary>
 /// Highlight targets for a Reverse Stack operation.
-/// For an explanation of a Reverse Stack see <see cref="AttemptReverseStackAfterFailedStack"/>.
+/// For an explanation of a Reverse Stack see <see cref="EnableReverseStack"/>.
 /// </summary>
 [HarmonyPatch]
 public static class HighlightReverseStackTargets

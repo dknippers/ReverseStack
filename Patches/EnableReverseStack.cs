@@ -51,6 +51,14 @@ public static class EnableReverseStack
         SmartStack.ModLogger.Log($"Stack {DebugDisplay.Stack(targetRoot)} on top of {DebugDisplay.Stack(topCard)}");
 #endif
 
+        // We do not want to move the target stack that we are Reverse Stacking onto.
+        // By default when adding a card onto a stack on the board the stack that was being dragged will snap onto
+        // the stack that is on the board.
+        // Technically since we perform a Reverse Stack operation the card we are dragging is considered
+        // the stack on the board and the stack that was actually on the board will be moved to snap onto the stack being dragged.
+        // To fix this issue we first update the position of the stack being dragged to the position of the stack we drag onto.
+        topCard.transform.position = (topCard.TargetPosition = targetRoot.transform.position);
+
         targetRoot.SetParent(inputLeaf);
 
 #if DEBUG
