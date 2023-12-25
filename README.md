@@ -1,4 +1,4 @@
-# SmartStack
+# ReverseStack
 
 > CURRENTLY IN DEVELOPMENT, NOT YET FUNCTIONAL.
 

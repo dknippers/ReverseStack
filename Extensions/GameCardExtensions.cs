@@ -1,4 +1,4 @@
-﻿namespace SmartStack.Extensions;
+namespace ReverseStack.Extensions;
 internal static class GameCardExtensions
 {
     /// <summary>

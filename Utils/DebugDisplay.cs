@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace SmartStack.Utils;
+namespace ReverseStack.Utils;
 
 public static class DebugDisplay
 {

@@ -1,8 +1,8 @@
 using HarmonyLib;
 
-namespace SmartStack;
+namespace ReverseStack;
 
-public class SmartStack : Mod
+public class ReverseStack : Mod
 {
     internal static ModLogger ModLogger { get; private set; } = null!;
 

@@ -1,8 +1,8 @@
 using HarmonyLib;
-using SmartStack.Extensions;
-using SmartStack.Utils;
+using ReverseStack.Extensions;
+using ReverseStack.Utils;
 
-namespace SmartStack.Patches;
+namespace ReverseStack.Patches;
 
 /// <summary>
 /// When an attempt to stack a stack X on top of stack Y has failed
@@ -48,7 +48,7 @@ public static class EnableReverseStack
         }
 
 #if DEBUG
-        SmartStack.ModLogger.Log($"Stack {DebugDisplay.Stack(targetRoot)} on top of {DebugDisplay.Stack(topCard)}");
+        ReverseStack.ModLogger.Log($"Stack {DebugDisplay.Stack(targetRoot)} on top of {DebugDisplay.Stack(topCard)}");
 #endif
 
         // We do not want to move the target stack that we are Reverse Stacking onto.
@@ -62,7 +62,7 @@ public static class EnableReverseStack
         targetRoot.SetParent(inputLeaf);
 
 #if DEBUG
-        SmartStack.ModLogger.Log($"New stack: {DebugDisplay.Stack(targetRoot)}");
+        ReverseStack.ModLogger.Log($"New stack: {DebugDisplay.Stack(targetRoot)}");
 #endif
 
         __result = true;

@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>SmartStack</AssemblyName>
+    <AssemblyName>ReverseStack</AssemblyName>
     <TargetFramework>netstandard2.1</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -35,12 +35,12 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="SmartStack_Variables" BeforeTargets="BeforeBuild">
+  <Target Name="ReverseStack_Variables" BeforeTargets="BeforeBuild">
     <Message Importance="High" Text="Game: $(StacklandsDataDir)" />
     <Message Importance="High" Text="Mod: $(StacklandsLocalModDir)" />
   </Target>
 
-  <Target Name="SmartStack_CopyToLocalModDirectory" AfterTargets="AfterBuild">    
+  <Target Name="ReverseStack_CopyToLocalModDirectory" AfterTargets="AfterBuild">    
     <MakeDir Directories="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="manifest.json" DestinationFolder="$(StacklandsLocalModDir)" />

@@ -1,8 +1,8 @@
 using HarmonyLib;
-using SmartStack.Extensions;
+using ReverseStack.Extensions;
 using UnityEngine;
 
-namespace SmartStack.Patches;
+namespace ReverseStack.Patches;
 
 /// <summary>
 /// Highlight targets for a Reverse Stack operation.
