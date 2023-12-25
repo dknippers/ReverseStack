@@ -37,9 +37,9 @@ public static class EnableReverseStack
             return;
         }
 
-        var inputLeaf = topCard.GetLeafCard();
-        var targetRoot = topCard.GetOverlappingCards()
-            .Where(card => card.IsRoot())
+        var targetRoot = topCard
+            .GetOverlappingCards()
+            .Select(c => c.GetRootCard())
             .FirstOrDefault(topCard.AllowsReverseStackOn);
 
         if (targetRoot is null)
@@ -59,7 +59,7 @@ public static class EnableReverseStack
         // To fix this issue we first update the position of the stack being dragged to the position of the stack we drag onto.
         topCard.transform.position = (topCard.TargetPosition = targetRoot.transform.position);
 
-        targetRoot.SetParent(inputLeaf);
+        targetRoot.SetParent(topCard.GetLeafCard());
 
 #if DEBUG
         ReverseStack.ModLogger.Log($"New stack: {DebugDisplay.Stack(targetRoot)}");
