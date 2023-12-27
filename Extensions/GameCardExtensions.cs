@@ -67,13 +67,11 @@ internal static class GameCardExtensions
     /// <returns></returns>
     internal static bool CanReverseStackOn(this GameCard card, GameCard other)
     {
-        if (card.IsEquipped || other.IsEquipped)
-        {
-            // We can never use Reverse Stack on cards that are currently equipped.
-            return false;
-        }
-
-        return !card.IsSameStack(other) && card.CanHaveOnTop(other);
+        return
+            !other.IsEquipped &&
+            other.Combatable?.InConflict != true &&
+            !card.IsSameStack(other) &&
+            card.CanHaveOnTop(other);
     }
 
     /// <summary>
