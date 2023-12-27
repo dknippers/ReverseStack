@@ -6,7 +6,7 @@ namespace ReverseStack.Patches;
 
 /// <summary>
 /// Highlight targets for a Reverse Stack operation.
-/// For an explanation of a Reverse Stack see <see cref="EnableReverseStack"/>.
+/// For an explanation of a Reverse Stack see <see cref="AttemptReverseStack"/>.
 /// </summary>
 [HarmonyPatch]
 public static class HighlightReverseStackTargets
@@ -20,7 +20,7 @@ public static class HighlightReverseStackTargets
             WorldManager.instance.DraggingCard is not GameCard draggingCard ||
             !card.IsRoot() ||
             card.CanHaveOnTop(draggingCard) ||
-            !draggingCard.AllowsReverseStackOn(card))
+            !draggingCard.CanReverseStackOn(card))
         {
             return;
         }

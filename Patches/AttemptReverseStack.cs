@@ -1,13 +1,14 @@
 using HarmonyLib;
 using ReverseStack.Extensions;
-using ReverseStack.Utils;
 
 namespace ReverseStack.Patches;
 
 /// <summary>
-/// When an attempt to stack a stack X on top of stack Y has failed
-/// this patch will check if we can instead stack Y on top of X.
+/// When a stack X cannot be stacked on top of a stack Y this patch will attempt the reverse: stack Y on top of X.
 ///
+/// This is especially useful when stack Y contains a Villager harvesting cards such as Apple Trees and does not allow any
+/// cards being stacked on top of it, but it can itself be stacked on top of another stack.
+/// 
 /// For example, consider stack X being:
 ///
 /// <code>
@@ -23,10 +24,12 @@ namespace ReverseStack.Patches;
 /// Stack X is not allowed on top of stack Y because the game does not allow anything to be added on top of
 /// a stack that has any status cards (cards that have a timer running). However, it is perfectly valid to put stack Y on top of stack X
 /// even if Y contains status cards.
-/// This patch will do exactly that; it will attempt a reverse stack of Y on top of X when the regular stack (X on top of Y) has failed.
+///
+/// When dragging stack X on top of stack Y and failing to stop on top this patch will put stack Y on top of stack X instead
+/// which is what the user would want in this case.
 /// </summary>
 [HarmonyPatch]
-public static class EnableReverseStack
+public static class AttemptReverseStack
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.CheckIfCanAddOnStack))]
@@ -40,16 +43,12 @@ public static class EnableReverseStack
         var targetRoot = topCard
             .GetOverlappingCards()
             .Select(c => c.GetRootCard())
-            .FirstOrDefault(topCard.AllowsReverseStackOn);
+            .FirstOrDefault(topCard.CanReverseStackOn);
 
         if (targetRoot is null)
         {
             return;
         }
-
-#if DEBUG
-        ReverseStack.ModLogger.Log($"Stack {DebugDisplay.Stack(targetRoot)} on top of {DebugDisplay.Stack(topCard)}");
-#endif
 
         // We do not want to move the target stack that we are Reverse Stacking onto.
         // By default when adding a card onto a stack on the board the stack that was being dragged will snap onto
@@ -57,13 +56,8 @@ public static class EnableReverseStack
         // Technically since we perform a Reverse Stack operation the card we are dragging is considered
         // the stack on the board and the stack that was actually on the board will be moved to snap onto the stack being dragged.
         // To fix this issue we first update the position of the stack being dragged to the position of the stack we drag onto.
-        topCard.transform.position = (topCard.TargetPosition = targetRoot.transform.position);
-
+        topCard.SetPosition(targetRoot.transform.position);
         targetRoot.SetParent(topCard.GetLeafCard());
-
-#if DEBUG
-        ReverseStack.ModLogger.Log($"New stack: {DebugDisplay.Stack(targetRoot)}");
-#endif
 
         __result = true;
     }

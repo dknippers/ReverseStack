@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace ReverseStack.Extensions;
 internal static class GameCardExtensions
 {
@@ -63,7 +65,7 @@ internal static class GameCardExtensions
     /// <param name="card">Card</param>
     /// <param name="other">Other card</param>
     /// <returns></returns>
-    internal static bool AllowsReverseStackOn(this GameCard card, GameCard other)
+    internal static bool CanReverseStackOn(this GameCard card, GameCard other)
     {
         if (card.IsEquipped || other.IsEquipped)
         {
@@ -72,6 +74,18 @@ internal static class GameCardExtensions
         }
 
         return !card.IsSameStack(other) && card.CanHaveOnTop(other);
+    }
+
+    /// <summary>
+    /// Instantly sets the position of <paramref name="card"/> to the given <paramref name="position"/>.
+    /// </summary>
+    /// <param name="card">Card</param>
+    /// <param name="position">Position</param>
+    internal static void SetPosition(this GameCard card, Vector3 position)
+    {
+        // Both the underlying transform position AND the custom TargetPosition
+        // properties need to be set to instantly set a card's position correctly.
+        card.transform.position = card.TargetPosition = position;
     }
 
     internal static bool IsRoot(this GameCard card) => card.Parent is null;
