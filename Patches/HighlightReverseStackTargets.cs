@@ -10,20 +10,20 @@ namespace ReverseStack.Patches;
 /// For an explanation of a Reverse Stack see <see cref="AttemptReverseStack"/>.
 /// </summary>
 [HarmonyPatch]
-internal static class HighlightReverseStackTargets
+public static class HighlightReverseStackTargets
 {
-    internal static HighlightValues Original = null!;
-    internal static HighlightValues Modified = null!;
+    public static HighlightValues Original = null!;
+    public static HighlightValues Modified = null!;
 
-    private const bool RS_DASHED = false;
-    private const float RS_CORNER_RADIUS = 0.02f;
-    private const float RS_THICKNESS = 0.032f;
-    private const float RS_ALPHA = 0.8f;
-    private const float RS_PADDING = -0.01f;
+    public const bool RS_DASHED = false;
+    public const float RS_CORNER_RADIUS = 0.02f;
+    public const float RS_THICKNESS = 0.032f;
+    public const float RS_ALPHA = 0.8f;
+    public const float RS_PADDING = -0.01f;
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(GameCard), "Update")]
-    internal static void GameCard_Update(GameCard __instance)
+    public static void GameCard_Update(GameCard __instance)
     {
         if (__instance is not GameCard card || card.HighlightActive) return;
 
@@ -57,17 +57,17 @@ internal static class HighlightReverseStackTargets
         var height = rect.Height + delta + RS_PADDING;
 
         Modified = new HighlightValues(RS_DASHED, RS_CORNER_RADIUS, RS_THICKNESS, width, height);
-    }    
+    }
 
-    internal class HighlightValues(bool dashes, float cornerRadius, float thickness, float width, float height)
+    public class HighlightValues(bool dashes, float cornerRadius, float thickness, float width, float height)
     {
         public bool Dashed { get; } = dashes;
         public float CornerRadius { get; } = cornerRadius;
         public float Thickness { get; } = thickness;
         public float Width { get; } = width;
-        public float Height { get; } = height;        
+        public float Height { get; } = height;
 
-        internal void Apply(Rectangle rect)
+        public void Apply(Rectangle rect)
         {
             rect.Dashed = Dashed;
             rect.CornerRadius = CornerRadius;
@@ -76,7 +76,7 @@ internal static class HighlightReverseStackTargets
             rect.Height = Height;
         }
 
-        internal bool IsApplied(Rectangle rect) =>
+        public bool IsApplied(Rectangle rect) =>
             rect.Dashed == Dashed &&
             rect.CornerRadius == CornerRadius &&
             rect.Thickness == Thickness &&

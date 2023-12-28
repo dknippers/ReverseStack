@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace ReverseStack.Extensions;
-internal static class GameCardExtensions
+public static class GameCardExtensions
 {
     /// <summary>
     /// Indicates if this stack can have the other stack on top, i.e. if the root of <paramref name="other"/> can be placed on the leaf of <paramref name="card"/>.
@@ -11,7 +11,7 @@ internal static class GameCardExtensions
     /// <param name="card">This card / stack</param>
     /// <param name="other">The other card / stack</param>
     /// <returns></returns>
-    internal static bool CanHaveOnTop(this GameCard card, GameCard other)
+    public static bool CanHaveOnTop(this GameCard card, GameCard other)
     {
         var leaf = card.GetLeafCard();
         var root = other.GetRootCard();
@@ -40,7 +40,7 @@ internal static class GameCardExtensions
     /// <param name="card">This card / stack</param>
     /// <param name="other">Other card / stack</param>
     /// <returns></returns>
-    internal static bool IsSameStack(this GameCard card, GameCard other)
+    public static bool IsSameStack(this GameCard card, GameCard other)
     {
         if (ReferenceEquals(card, other))
         {
@@ -65,7 +65,7 @@ internal static class GameCardExtensions
     /// <param name="card">Card</param>
     /// <param name="other">Other card</param>
     /// <returns></returns>
-    internal static bool CanReverseStackOn(this GameCard card, GameCard other)
+    public static bool CanReverseStackOn(this GameCard card, GameCard other)
     {
         return
             !other.IsEquipped &&
@@ -79,13 +79,13 @@ internal static class GameCardExtensions
     /// </summary>
     /// <param name="card">Card</param>
     /// <param name="position">Position</param>
-    internal static void SetPosition(this GameCard card, Vector3 position)
+    public static void SetPosition(this GameCard card, Vector3 position)
     {
         // Both the underlying transform position AND the custom TargetPosition
         // properties need to be set to instantly set a card's position correctly.
         card.transform.position = card.TargetPosition = position;
     }
 
-    internal static bool IsRoot(this GameCard card) => card.Parent is null;
-    internal static bool IsLeaf(this GameCard card) => card.Child is null;
+    public static bool IsRoot(this GameCard card) => card.Parent is null;
+    public static bool IsLeaf(this GameCard card) => card.Child is null;
 }

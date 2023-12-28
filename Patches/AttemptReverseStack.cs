@@ -29,11 +29,11 @@ namespace ReverseStack.Patches;
 /// which is what the user would want in this case.
 /// </summary>
 [HarmonyPatch]
-internal static class AttemptReverseStack
+public static class AttemptReverseStack
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.CheckIfCanAddOnStack))]
-    internal static void WorldManager_CheckIfCanAddOnStack(GameCard topCard, ref bool __result)
+    public static void WorldManager_CheckIfCanAddOnStack(GameCard topCard, ref bool __result)
     {
         if (__result || topCard?.CardData is null)
         {
