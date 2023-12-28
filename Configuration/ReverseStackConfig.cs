@@ -6,35 +6,31 @@ public class ReverseStackConfig
 {
     private const string DEFAULT_HIGHLIGHT_COLOR = "#000";
     private const float DEFAULT_HIGHLIGHT_ALPHA = 0.8f;
+    private const float DEFAULT_HIGHLIGHT_THICKNESS = 0.04f;
     private const bool DEFAULT_HIGHLIGHT_DASHED = false;
-    private const float DEFAULT_HIGHLIGHT_THICKNESS = 0.036f;
     private static readonly Color _defaultColor = new(0, 0, 0, DEFAULT_HIGHLIGHT_ALPHA);
 
-    private ReverseStackConfig(Color highlightColor, bool highlightDashed, float highlightThickness)
-    {
-        HighlightColor = highlightColor;
-        HighlightDashed = highlightDashed;
-        HighlightThickness = highlightThickness;
-    }
+    private ReverseStackConfig() { }
 
-    public static ReverseStackConfig Instance { get; private set; } = null!;
+    public static ReverseStackConfig? Instance { get; private set; }
 
-    public Color HighlightColor { get; }
-    public bool HighlightDashed { get; }
-    public float HighlightThickness { get; }
+    public Color HighlightColor { get; private set; }
+    public float HighlightThickness { get; private set; }
+    public bool HighlightDashed { get; private set; }
+
+    public delegate void OnChangeHandler(ReverseStackConfig newConfig);
+
+    public event OnChangeHandler? OnChange;
 
     internal static ReverseStackConfig Init(ConfigFile config)
     {
-        if (Instance is not null)
-        {
-            throw new InvalidOperationException("Configuration already initialized");
-        }
+        Instance ??= new ReverseStackConfig();
 
         var hex = GetValue(config,
             "HighlightColor",
             "Highlight color",
             DEFAULT_HIGHLIGHT_COLOR,
-            $"The highlight color (hex notation) for Reverse Stack targets. Default is black: {DEFAULT_HIGHLIGHT_COLOR}");
+            $"The highlight color in hex. Default is black: {DEFAULT_HIGHLIGHT_COLOR}");
 
         var alpha = GetValue(config,
             "HighlightAlpha",
@@ -42,21 +38,31 @@ public class ReverseStackConfig
             DEFAULT_HIGHLIGHT_ALPHA,
             $"The alpha channel of the highlight color, 0 = transparent and 1 = opaque. Default is {DEFAULT_HIGHLIGHT_ALPHA}");
 
-        var dashed = GetValue(config,
-            "HighlightDashed",
-            "Highlight dashed",
-            DEFAULT_HIGHLIGHT_DASHED,
-            $"Use dashes for the Reverse Stack highlight. Default is {(DEFAULT_HIGHLIGHT_DASHED ? "On" : "Off")}");
-
         var thickness = GetValue(config,
             "HighlightThickness",
             "Highlight thickness",
             DEFAULT_HIGHLIGHT_THICKNESS,
             $"The thickness of the highlight. Default is {DEFAULT_HIGHLIGHT_THICKNESS}");
 
+        var dashed = GetValue(config,
+             "HighlightDashed",
+             "Highlight dashed",
+             DEFAULT_HIGHLIGHT_DASHED,
+             $"Use animated dashed borders for the highlight (On) or solid borders (Off). Default is {(DEFAULT_HIGHLIGHT_DASHED ? "On" : "Off")}");
+
         var highlightColor = HexToRgb(hex, alpha);
 
-        return Instance = new ReverseStackConfig(highlightColor, dashed, thickness);
+        Instance.HighlightColor = highlightColor;
+        Instance.HighlightThickness = thickness;
+        Instance.HighlightDashed = dashed;
+
+        config.OnSave = () =>
+        {
+            var cfg = Init(config);
+            Instance.OnChange?.Invoke(cfg);
+        };
+
+        return Instance;
     }
 
     private static T GetValue<T>(ConfigFile config, string key, string name, T defaultValue, string tooltip)
@@ -65,7 +71,7 @@ public class ReverseStackConfig
         {
             Name = name,
             Tooltip = tooltip,
-            RestartAfterChange = true,
+            RestartAfterChange = false,
         }).Value;
     }
 

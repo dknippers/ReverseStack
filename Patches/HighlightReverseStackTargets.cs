@@ -46,12 +46,19 @@ public static class HighlightReverseStackTargets
     {
         Original = new HighlightValues(rect.Dashed, rect.CornerRadius, rect.Thickness, rect.Width, rect.Height, rect.Color);
 
+        UpdateModified(config, Original);
+
+        config.OnChange += cfg => UpdateModified(cfg, Original);
+    }
+
+    private static void UpdateModified(ReverseStackConfig config, HighlightValues original)
+    {
         const float CORNER_RADIUS = 0.01f;
         const float OFFSET = -0.014f;
 
-        var delta = config.HighlightThickness - rect.Thickness;
-        var width = rect.Width + 2 * delta + (config.HighlightDashed ? 0 : OFFSET);
-        var height = rect.Height + 2 * delta + (config.HighlightDashed ? 0 : OFFSET);
+        var delta = config.HighlightThickness - original.Thickness;
+        var width = original.Width + 2 * delta + (config.HighlightDashed ? 0 : OFFSET);
+        var height = original.Height + 2 * delta + (config.HighlightDashed ? 0 : OFFSET);
 
         Modified = new HighlightValues(config.HighlightDashed, CORNER_RADIUS, config.HighlightThickness, width, height, config.HighlightColor);
     }
