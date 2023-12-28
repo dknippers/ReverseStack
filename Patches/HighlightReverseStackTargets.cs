@@ -1,4 +1,5 @@
 using HarmonyLib;
+using ReverseStack.Configuration;
 using ReverseStack.Extensions;
 using Shapes;
 using UnityEngine;
@@ -18,8 +19,7 @@ public static class HighlightReverseStackTargets
     public const bool DASHED = false;
     public const float CORNER_RADIUS = 0.02f;
     public const float THICKNESS = 0.036f;
-    public const float ALPHA = 0.8f;
-
+ 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(GameCard), "Update")]
     public static void GameCard_Update(GameCard __instance)
@@ -43,36 +43,60 @@ public static class HighlightReverseStackTargets
         card.HighlightActive = true;
         card.HighlightRectangle.enabled = true;
 
-        card.HighlightRectangle.Color = new Color(0, 0, 0, ALPHA);
         Modified.Apply(card.HighlightRectangle);
     }
 
-    internal static void InitHighlightValues(Rectangle rect)
+    internal static void Init(ReverseStackConfig config, Rectangle rect)
     {
-        Original = new HighlightValues(rect.Dashed, rect.CornerRadius, rect.Thickness, rect.Width, rect.Height);
+        Original = new HighlightValues(rect.Dashed, rect.CornerRadius, rect.Thickness, rect.Width, rect.Height, rect.Color);
 
         var delta = THICKNESS - rect.Thickness;
         var width = rect.Width + delta;
         var height = rect.Height + delta;
 
-        Modified = new HighlightValues(DASHED, CORNER_RADIUS, THICKNESS, width, height);
+        Modified = new HighlightValues(DASHED, CORNER_RADIUS, THICKNESS, width, height, config.HighlightColor);
     }
 
-    public class HighlightValues(bool dashes, float cornerRadius, float thickness, float width, float height)
+    public class HighlightValues(bool dashes, float cornerRadius, float thickness, float width, float height, Color color)
     {
         public bool Dashed { get; } = dashes;
         public float CornerRadius { get; } = cornerRadius;
         public float Thickness { get; } = thickness;
         public float Width { get; } = width;
         public float Height { get; } = height;
+        public Color Color { get; } = color;
 
         public void Apply(Rectangle rect)
         {
-            rect.Dashed = Dashed;
-            rect.CornerRadius = CornerRadius;
-            rect.Thickness = Thickness;
-            rect.Width = Width;
-            rect.Height = Height;
+            if (rect.Dashed != Dashed)
+            {
+                rect.Dashed = Dashed;
+            }
+
+            if (rect.CornerRadius != CornerRadius)
+            {
+                rect.CornerRadius = CornerRadius;
+            }
+
+            if (rect.Thickness != Thickness)
+            {
+                rect.Thickness = Thickness;
+            }
+
+            if (rect.Width != Width)
+            {
+                rect.Width = Width;
+            }
+
+            if (rect.Height != Height)
+            {
+                rect.Height = Height;
+            }
+
+            if (rect.Color != Color)
+            {
+                rect.Color = Color;
+            }
         }
 
         public bool IsApplied(Rectangle rect) =>
@@ -80,6 +104,7 @@ public static class HighlightReverseStackTargets
             rect.CornerRadius == CornerRadius &&
             rect.Thickness == Thickness &&
             rect.Width == Width &&
-            rect.Height == Height;
+            rect.Height == Height &&
+            rect.Color == Color;
     }
 }

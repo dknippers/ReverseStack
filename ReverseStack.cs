@@ -1,14 +1,18 @@
 using HarmonyLib;
+using ReverseStack.Configuration;
 using ReverseStack.Patches;
 
 namespace ReverseStack;
 
-public class ReverseStack : Mod
+public partial class ReverseStack : Mod
 {
     public override void Ready()
     {
+        var modConfig = ReverseStackConfig.Init(Config);
+
         var originalHighlightRect = PrefabManager.instance.GameCardPrefab.HighlightRectangle;
-        HighlightReverseStackTargets.InitHighlightValues(originalHighlightRect);
+        HighlightReverseStackTargets.Init(modConfig, originalHighlightRect);        
+
         Harmony.PatchAll();
-    } 
+    }
 }
