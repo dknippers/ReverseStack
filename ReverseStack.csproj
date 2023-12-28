@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>0.2.0</Version>
+    <Version>0.9.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Label="Set Stacklands Directories">
