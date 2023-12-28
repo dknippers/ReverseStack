@@ -16,10 +16,6 @@ public static class HighlightReverseStackTargets
     public static HighlightValues Original = null!;
     public static HighlightValues Modified = null!;
 
-    public const bool DASHED = false;
-    public const float CORNER_RADIUS = 0.02f;
-    public const float THICKNESS = 0.036f;
- 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(GameCard), "Update")]
     public static void GameCard_Update(GameCard __instance)
@@ -50,11 +46,14 @@ public static class HighlightReverseStackTargets
     {
         Original = new HighlightValues(rect.Dashed, rect.CornerRadius, rect.Thickness, rect.Width, rect.Height, rect.Color);
 
-        var delta = THICKNESS - rect.Thickness;
-        var width = rect.Width + delta;
-        var height = rect.Height + delta;
+        const float CORNER_RADIUS = 0.01f;
+        const float OFFSET = -0.014f;
 
-        Modified = new HighlightValues(DASHED, CORNER_RADIUS, THICKNESS, width, height, config.HighlightColor);
+        var delta = config.HighlightThickness - rect.Thickness;
+        var width = rect.Width + 2 * delta + (config.HighlightDashed ? 0 : OFFSET);
+        var height = rect.Height + 2 * delta + (config.HighlightDashed ? 0 : OFFSET);
+
+        Modified = new HighlightValues(config.HighlightDashed, CORNER_RADIUS, config.HighlightThickness, width, height, config.HighlightColor);
     }
 
     public class HighlightValues(bool dashes, float cornerRadius, float thickness, float width, float height, Color color)
