@@ -15,11 +15,10 @@ public static class HighlightReverseStackTargets
     public static HighlightValues Original = null!;
     public static HighlightValues Modified = null!;
 
-    public const bool RS_DASHED = false;
-    public const float RS_CORNER_RADIUS = 0.02f;
-    public const float RS_THICKNESS = 0.032f;
-    public const float RS_ALPHA = 0.8f;
-    public const float RS_PADDING = -0.01f;
+    public const bool DASHED = false;
+    public const float CORNER_RADIUS = 0.02f;
+    public const float THICKNESS = 0.036f;
+    public const float ALPHA = 0.8f;
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(GameCard), "Update")]
@@ -44,7 +43,7 @@ public static class HighlightReverseStackTargets
         card.HighlightActive = true;
         card.HighlightRectangle.enabled = true;
 
-        card.HighlightRectangle.Color = new Color(0, 0, 0, RS_ALPHA);
+        card.HighlightRectangle.Color = new Color(0, 0, 0, ALPHA);
         Modified.Apply(card.HighlightRectangle);
     }
 
@@ -52,11 +51,11 @@ public static class HighlightReverseStackTargets
     {
         Original = new HighlightValues(rect.Dashed, rect.CornerRadius, rect.Thickness, rect.Width, rect.Height);
 
-        var delta = RS_THICKNESS - rect.Thickness;
-        var width = rect.Width + delta + RS_PADDING;
-        var height = rect.Height + delta + RS_PADDING;
+        var delta = THICKNESS - rect.Thickness;
+        var width = rect.Width + delta;
+        var height = rect.Height + delta;
 
-        Modified = new HighlightValues(RS_DASHED, RS_CORNER_RADIUS, RS_THICKNESS, width, height);
+        Modified = new HighlightValues(DASHED, CORNER_RADIUS, THICKNESS, width, height);
     }
 
     public class HighlightValues(bool dashes, float cornerRadius, float thickness, float width, float height)
@@ -80,7 +79,7 @@ public static class HighlightReverseStackTargets
             rect.Dashed == Dashed &&
             rect.CornerRadius == CornerRadius &&
             rect.Thickness == Thickness &&
-            rect.Height == Height &&
-            rect.Width == Width;
+            rect.Width == Width &&
+            rect.Height == Height;
     }
 }
