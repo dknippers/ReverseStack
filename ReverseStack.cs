@@ -11,7 +11,7 @@ public partial class ReverseStack : Mod
         var modConfig = ReverseStackConfig.Init(Config);
 
         var originalHighlightRect = PrefabManager.instance.GameCardPrefab.HighlightRectangle;
-        HighlightReverseStackTargets.Init(modConfig, originalHighlightRect);        
+        HighlightReverseStackTargets.Init(modConfig, originalHighlightRect);
 
         Harmony.PatchAll();
     }

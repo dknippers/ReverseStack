@@ -75,6 +75,21 @@ public static class GameCardExtensions
     }
 
     /// <summary>
+    /// Indicates if <paramref name="card"/> allows an automatic Reverse Stack operation with <paramref name="other"/>,
+    /// i.e. whether <paramref name="other"/> can be stacked on top of <paramref name="card"/> without the user performing a drag operation.
+    /// This occurs for example when a Card is produced by a <see cref="Harvestable"/> or created in some other way.
+    /// </summary>
+    /// <param name="card">Card</param>
+    /// <param name="other">Other card</param>
+    /// <returns></returns>
+    public static bool CanAutoReverseStackOn(this GameCard card, GameCard other)
+    {
+        // We only allow automatic Reverse Stack when the cards are the same kind (e.g. both an Apple Tree)
+        // This is similar to what the game checks when Cards are bouncing into other cards.
+        return card.IsSamePrefab(other) && card.CanReverseStackOn(other);
+    }
+
+    /// <summary>
     /// Instantly sets the position of <paramref name="card"/> to the given <paramref name="position"/>.
     /// </summary>
     /// <param name="card">Card</param>
@@ -84,6 +99,19 @@ public static class GameCardExtensions
         // Both the underlying transform position AND the custom TargetPosition
         // properties need to be set to instantly set a card's position correctly.
         card.transform.position = card.TargetPosition = position;
+    }
+
+    /// <summary>
+    /// Indicates if <paramref name="card"/> and <paramref name="other"/> are instances of the same prefab.
+    /// </summary>
+    /// <param name="card">Card</param>
+    /// <param name="other">Other card</param>
+    /// <returns></returns>
+    public static bool IsSamePrefab(this GameCard card, GameCard other)
+    {
+        if (ReferenceEquals(card, other)) return true;
+
+        return card.CardData.Id == other.CardData.Id;
     }
 
     public static bool IsRoot(this GameCard card) => card.Parent is null;

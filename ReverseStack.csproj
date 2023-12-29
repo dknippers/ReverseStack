@@ -30,6 +30,10 @@
       <HintPath>$(StacklandsDataDir)\Managed\ShapesRuntime.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(StacklandsDataDir)\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(StacklandsDataDir)\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
