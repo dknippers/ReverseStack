@@ -1,7 +1,6 @@
 using HarmonyLib;
+using ReverseStack.Configuration;
 using ReverseStack.Extensions;
-using System;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace ReverseStack.Patches;
@@ -38,6 +37,14 @@ public static class AttemptReverseStack
     [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.StackSend))]
     public static void WorldManager_StackSend(GameCard myCard, WorldManager __instance)
     {
+        if (ReverseStackConfig.Instance is not ReverseStackConfig config ||
+            !config.EnableForAutoStack ||
+            config.AutoStackRange <= 0f)
+        {
+            Debug.Log("[WorldManager_StackSend] Enable for auto stack is OFF, skipping");
+            return;
+        }
+
         if (myCard is null || myCard.BounceTarget is not null)
         {
             return;
@@ -54,10 +61,10 @@ public static class AttemptReverseStack
             myCard.BounceTarget = targetCard;
             myCard.Velocity = velocity;
         }
-       
+
         bool IsNearbyReverseStackTarget(GameCard other)
         {
-            if (!other.IsRoot() ||                
+            if (!other.IsRoot() ||
                 !myCard.CanAutoReverseStackOn(other))
             {
                 return false;
@@ -66,10 +73,7 @@ public static class AttemptReverseStack
             var vector = other.transform.position - myCard.transform.position;
             var distance = vector.magnitude;
 
-            // TODO: Make distance configurable in our mod since we cannot read the one the game uses
-            // reliably because other mods can have edited that. So end users will just have to sync the
-            // configured distance with our mod setting too.
-            if (distance > 4f) return false;
+            if (distance > config.AutoStackRange) return false;
 
             return true;
         }
@@ -79,6 +83,13 @@ public static class AttemptReverseStack
     [HarmonyPatch(typeof(GameCard), "Bounce")]
     public static void GameCard_Bounce_Prefix(GameCard __instance, out GameCard? __state)
     {
+        if (ReverseStackConfig.Instance?.EnableForAutoStack == false)
+        {
+            Debug.Log("[GameCard_Bounce_Prefix] Enable for auto stack is OFF, skipping");
+            __state = null;
+            return;
+        }
+
         __state = __instance?.BounceTarget;
     }
 
@@ -86,10 +97,16 @@ public static class AttemptReverseStack
     [HarmonyPatch(typeof(GameCard), "Bounce")]
     public static void GameCard_Bounce(GameCard __instance, GameCard? __state)
     {
+        if (ReverseStackConfig.Instance?.EnableForAutoStack == false)
+        {
+            Debug.Log("[GameCard_Bounce] Enable for auto stack is OFF, skipping");
+            return;
+        }
+
         var bounceTarget = __state;
 
         if (__instance is null || bounceTarget is null || __instance.HasParent || __instance.Velocity is null)
-        {           
+        {
             return;
         }
 
@@ -98,7 +115,7 @@ public static class AttemptReverseStack
             ReverseStackOn(__instance, bounceTarget);
             __instance.Velocity = null;
             __instance.BounceTarget = null;
-        }       
+        }
     }
 
     [HarmonyPostfix]
