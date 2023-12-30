@@ -90,6 +90,27 @@ public static class GameCardExtensions
     }
 
     /// <summary>
+    /// Reverse stacks <paramref name="card"/> onto <paramref name="target"/>.
+    /// Note this method just performs the Reverse Stack without checking whether it is possible.
+    /// Caller should ensure this using <see cref="CanReverseStackOn(GameCard, GameCard)"/>.
+    /// </summary>
+    /// <param name="card">Card to Reverse Stack</param>
+    /// <param name="target">Card to Reverse Stack onto</param>
+    public static void ReverseStackOn(this GameCard card, GameCard target)
+    {
+        // We do not want to move the target stack that we are Reverse Stacking onto.
+        // By default when adding a card onto a stack on the board the stack that was being dragged will snap onto
+        // the stack that is on the board.
+        // Technically since we perform a Reverse Stack operation the card we are dragging is considered
+        // the stack on the board and the stack that was actually on the board will be moved to snap onto the stack being dragged.
+        // To fix this issue we first update the position of the stack being dragged to the position of the stack we drag onto.
+        card.SetPosition(target.transform.position);
+        target.SetParent(card.GetLeafCard());
+
+        AudioManager.me.PlaySound2D(AudioManager.me.DropOnStack, UnityEngine.Random.Range(0.8f, 1.2f), 0.3f);
+    }
+
+    /// <summary>
     /// Instantly sets the position of <paramref name="card"/> to the given <paramref name="position"/>.
     /// </summary>
     /// <param name="card">Card</param>

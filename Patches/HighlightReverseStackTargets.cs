@@ -7,8 +7,8 @@ using UnityEngine;
 namespace ReverseStack.Patches;
 
 /// <summary>
-/// Highlight targets for a Reverse Stack operation.
-/// For an explanation of a Reverse Stack see <see cref="AttemptReverseStack"/>.
+/// Highlight targets for a Reverse Stack operation while dragging.
+/// For an explanation of a Reverse Stack see <see cref="EnableReverseStackOnDrag"/>.
 /// </summary>
 [HarmonyPatch]
 public static class HighlightReverseStackTargets
