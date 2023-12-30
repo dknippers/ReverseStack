@@ -29,6 +29,16 @@ public static class EnableAutoReverseStack
 
         if (target is not null && target.MyGameCard is GameCard targetCard)
         {
+            Debug.Log($"Set target for {myCard.GetDebugName()} to {targetCard.GetDebugName()}");
+
+            // If our target card itself is traveling to some other card we will set
+            // that as our target too to follow the same trajectery as targetCard
+            if (targetCard.BounceTarget is not null)
+            {
+                Debug.Log($"Update target for {myCard.GetDebugName()} from {targetCard.GetDebugName()} to {targetCard.BounceTarget.GetDebugName()}");
+                targetCard = targetCard.BounceTarget;
+            }
+
             // Velocity calculation copied from WorldManager.StackSend (line 1718)
             var vector = targetCard.transform.position - myCard.transform.position;
             var velocity = new Vector3(vector.x * 4f, 7f, vector.z * 4f);
@@ -86,6 +96,8 @@ public static class EnableAutoReverseStack
         {
             return;
         }
+
+        Debug.Log($"Auto RS {__instance.GetDebugName()} On {bounceTarget.GetDebugName()}");
 
         if (__instance.CanAutoReverseStackOn(bounceTarget))
         {

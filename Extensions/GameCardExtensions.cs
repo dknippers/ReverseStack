@@ -1,3 +1,4 @@
+using System.Text;
 using UnityEngine;
 
 namespace ReverseStack.Extensions;
@@ -86,7 +87,9 @@ public static class GameCardExtensions
     {
         // We only allow automatic Reverse Stack when the cards are the same kind (e.g. both an Apple Tree)
         // This is similar to what the game checks when Cards are bouncing into other cards.
-        return card.IsSamePrefab(other) && card.CanReverseStackOn(other);
+        var leaf = card.GetLeafCard();
+        var root = other.GetRootCard();
+        return leaf.IsSamePrefab(root) && leaf.CanReverseStackOn(root);
     }
 
     /// <summary>
@@ -104,8 +107,14 @@ public static class GameCardExtensions
         // Technically since we perform a Reverse Stack operation the card we are dragging is considered
         // the stack on the board and the stack that was actually on the board will be moved to snap onto the stack being dragged.
         // To fix this issue we first update the position of the stack being dragged to the position of the stack we drag onto.
-        card.SetPosition(target.transform.position);
-        target.SetParent(card.GetLeafCard());
+        var cardLeaf = card.GetLeafCard();
+        var cardRoot = card.GetRootCard();
+        var targetRoot = target.GetRootCard();
+
+        Debug.Log($"RS {cardLeaf.GetDebugName()} On {targetRoot.GetDebugName()}");
+
+        cardRoot.SetPosition(targetRoot.transform.position);
+        targetRoot.SetParent(cardLeaf);
 
         AudioManager.me.PlaySound2D(AudioManager.me.DropOnStack, UnityEngine.Random.Range(0.8f, 1.2f), 0.3f);
     }
@@ -137,4 +146,22 @@ public static class GameCardExtensions
 
     public static bool IsRoot(this GameCard card) => card.Parent is null;
     public static bool IsLeaf(this GameCard card) => card.Child is null;
+
+    public static string GetName(this GameCard card)
+    {
+        return card?.CardData?.Name ?? "NULL";
+    }
+
+    public static string GetDebugName(this GameCard card)
+    {
+        if (card is null) return "NULL";
+
+        return new StringBuilder()
+            .Append('[')
+            .Append(Math.Abs(card.GetInstanceID()))
+            .Append(']')
+            .Append(' ')
+            .Append(card.GetName())
+            .ToString();
+    }
 }
