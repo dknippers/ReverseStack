@@ -32,45 +32,18 @@ public static class EnableAutoReverseStack
         if (target?.MyGameCard is not GameCard targetCard)
         {
             Debug.Log($"No new target found for {myCard.GetDebugName()}");
+
+            if (myCard.BounceTarget is not null)
+            {
+                SetBounceTarget(myCard, myCard.BounceTarget);
+            }
+
             return;
         }
 
         Debug.Log($"Set target for {myCard.GetDebugName()} to {targetCard.GetDebugName()}, distance = {(targetCard.transform.position - myCard.transform.position).magnitude}");
 
-        if (!string.IsNullOrEmpty(targetCard.TimerBlueprintId) &&
-            WorldManager.instance.GetBlueprintWithId(targetCard.TimerBlueprintId) is Blueprint blueprint)
-        {
-            Debug.Log(@$"{targetCard.GetDebugName()} has active blueprint: {blueprint.Name}
-Needs exact match: {blueprint.NeedsExactMatch}");
-
-            if (blueprint.Subprints.Count > 0)
-            {
-                int i = 0;
-                foreach (var subprint in blueprint.Subprints)
-                {
-                    Debug.Log(@$"Subprints[{i++}]: {subprint.StatusName}
-RequiredCards: {string.Join(", ", subprint.RequiredCards)}
-CardsToRemove: {string.Join(", ", subprint.CardsToRemove)}
-ExtraResultCards: {string.Join(", ", subprint.ExtraResultCards)}");
-                }
-            }
-        }
-        else
-        {
-            Debug.Log($"No active blueprint on {targetCard.GetDebugName()}");
-        }
-
-
-        // If our target card itself is traveling to some other card we will set
-        // that as our target too to follow the same trajectery as targetCard
-        if (targetCard.BounceTarget is not null)
-        {
-            Debug.Log($"Update target for {myCard.GetDebugName()} from {targetCard.GetDebugName()} to {targetCard.BounceTarget.GetDebugName()}");
-            targetCard = targetCard.BounceTarget;
-        }
-
-        myCard.BounceTarget = targetCard;
-        myCard.Velocity = GetVelocity(myCard, targetCard);
+        SetBounceTarget(myCard, targetCard);
 
         bool IsNearbyReverseStackTarget(GameCard other)
         {
@@ -91,6 +64,34 @@ ExtraResultCards: {string.Join(", ", subprint.ExtraResultCards)}");
 
             return true;
         }
+    }
+
+    private static void SetBounceTarget(GameCard card, GameCard target)
+    {
+        var finalTarget = GetFinalBounceTarget(target);
+
+        if (finalTarget != target)
+        {
+            Debug.Log($"Update target for {card.GetDebugName()} from {target.GetDebugName()} to {finalTarget.GetDebugName()}");
+        }
+
+        card.BounceTarget = finalTarget;
+        card.Velocity = GetVelocity(card, finalTarget);
+    }
+
+    private static GameCard GetFinalBounceTarget(GameCard firstBounceTarget)
+    {
+        const int MAX_ITERATIONS = 10;
+
+        GameCard finalBounceTarget = firstBounceTarget;
+
+        int i = 0;
+        while (finalBounceTarget.BounceTarget is not null && i++ < MAX_ITERATIONS)
+        {
+            finalBounceTarget = finalBounceTarget.BounceTarget;
+        }
+
+        return finalBounceTarget;
     }
 
     /// <summary>
