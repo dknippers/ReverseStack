@@ -45,11 +45,17 @@ public static class AttemptReverseStack
             return;
         }
 
-        if (myCard is null || myCard.BounceTarget is not null)
+        if (myCard is null || (myCard.BounceTarget is not null && config.AutoStackPreferNormalStack))
         {
+            if (myCard?.BounceTarget is not null && config.AutoStackPreferNormalStack)
+            {
+                Debug.Log("[WorldManager_StackSend] Game found normal stack target and we prefer that so SKIP");
+            }
+
             return;
         }
 
+        var distanceToNormalStackTarget = (myCard.BounceTarget?.transform.position - myCard.transform.position)?.magnitude;
         var target = __instance.GetNearestCardMatchingPred(myCard, IsNearbyReverseStackTarget);
 
         if (target is not null && target.MyGameCard is GameCard targetCard)
@@ -73,7 +79,11 @@ public static class AttemptReverseStack
             var vector = other.transform.position - myCard.transform.position;
             var distance = vector.magnitude;
 
-            if (distance > config.AutoStackRange) return false;
+            if (distance > config.AutoStackRange ||
+                distance > distanceToNormalStackTarget)
+            {
+                return false;
+            }
 
             return true;
         }

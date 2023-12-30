@@ -10,14 +10,17 @@ public class ReverseStackConfig
     /// <param name="updatedConfig">The same config instance but with updated values</param>
     public delegate void OnChangeHandler(ReverseStackConfig updatedConfig);
 
-    private const string DEFAULT_HIGHLIGHT_COLOR = "#000";
-    private const float DEFAULT_HIGHLIGHT_ALPHA = 0.8f;
-    private const float DEFAULT_HIGHLIGHT_THICKNESS = 0.04f;
-    private const bool DEFAULT_HIGHLIGHT_DASHED = false;
-    private const bool DEFAULT_ENABLE_FOR_AUTO_STACK = true;
-    private const float DEFAULT_AUTO_STACK_RANGE = 2.0f;
-
-    private static readonly Color _defaultColor = new(0, 0, 0, DEFAULT_HIGHLIGHT_ALPHA);
+    public static class Defaults
+    {
+        public const string HIGHLIGHT_COLOR = "#000";
+        public const float HIGHLIGHT_ALPHA = 0.8f;
+        public const float HIGHLIGHT_THICKNESS = 0.04f;
+        public const bool HIGHLIGHT_DASHED = false;
+        public const bool ENABLE_FOR_AUTO_STACK = true;
+        public const bool AUTO_STACK_PREFER_NORMAL_STACK = false;
+        public const float AUTO_STACK_RANGE = 2.0f;
+        public static readonly Color HighlightColor = new(0, 0, 0, HIGHLIGHT_ALPHA);
+    }
 
     private ReverseStackConfig() { }
 
@@ -28,6 +31,7 @@ public class ReverseStackConfig
     public bool HighlightDashed { get; private set; }
 
     public bool EnableForAutoStack { get; private set; }
+    public bool AutoStackPreferNormalStack { get; private set; }
     public float AutoStackRange { get; private set; }
 
     public event OnChangeHandler? OnChange;
@@ -39,58 +43,74 @@ public class ReverseStackConfig
         var hex = GetValue(config,
             "HighlightColor",
             "Highlight color",
-            DEFAULT_HIGHLIGHT_COLOR,
+            Defaults.HIGHLIGHT_COLOR,
 @$"The highlight color in hex.
 
-Default is {DEFAULT_HIGHLIGHT_COLOR}");
+Default is {Defaults.HIGHLIGHT_COLOR}");
 
         var alpha = GetValue(config,
             "HighlightAlpha",
             "Highlight color alpha",
-            DEFAULT_HIGHLIGHT_ALPHA,
+            Defaults.HIGHLIGHT_ALPHA,
 @$"The alpha channel of the highlight color.
 0 = transparent, 1 = opaque.
 
-Default is {DEFAULT_HIGHLIGHT_ALPHA}");
+Default is {Defaults.HIGHLIGHT_ALPHA}");
 
         var thickness = GetValue(config,
             "HighlightThickness",
             "Highlight thickness",
-            DEFAULT_HIGHLIGHT_THICKNESS,
+            Defaults.HIGHLIGHT_THICKNESS,
 @$"The thickness of the highlight.
 
-Default is {DEFAULT_HIGHLIGHT_THICKNESS}");
+Default is {Defaults.HIGHLIGHT_THICKNESS}");
 
         var dashed = GetValue(config,
              "HighlightDashed",
              "Highlight dashed",
-             DEFAULT_HIGHLIGHT_DASHED,
+             Defaults.HIGHLIGHT_DASHED,
 @$"Use animated dashed borders for the highlight (On) or solid borders (Off).
 
-Default is {(DEFAULT_HIGHLIGHT_DASHED ? "On" : "Off")}");
+Default is {(Defaults.HIGHLIGHT_DASHED ? "On" : "Off")}");
 
         var enableForAutoStack = GetValue(config,
              "EnableForAutoStack",
              "Enable for auto stack",
-             DEFAULT_ENABLE_FOR_AUTO_STACK,
+             Defaults.ENABLE_FOR_AUTO_STACK,
 @$"Enable Reverse Stack whenever the game attempts to automatically stack a card,
-for example when a card is spawned after harvesting.
+for example when a card is spawned after harvesting among many other situations.
 
-If the game cannot stack a card to the top of nearby stack in such scenarios we
-will attempt to stack it to the bottom instead.
+In addition to the default game logic of looking for stacks to stack on top of we
+will also check for any Reverse Stack targets and use them if they are closer.
 
-Default is {(DEFAULT_ENABLE_FOR_AUTO_STACK ? "On" : "Off")}");
+Default is {(Defaults.ENABLE_FOR_AUTO_STACK ? "On" : "Off")}");
+
+        var autoStackPreferNormalStack = GetValue(config,
+             "AutoStackPreferNormalStack",
+             "Prefer normal stack\nin auto stack",
+             Defaults.AUTO_STACK_PREFER_NORMAL_STACK,
+@$"If turned On a normal stack always has priority during auto stacking cards,
+i.e. if the game finds a valid stack target we will not attempt to find a Reverse Stack
+target even if there might be one closer to the card to stack.
+
+Only if the game finds no normal stack target we will look for a Reverse Stack target.
+
+If turned Off we will always look for a Reverse Stack target but only use it
+when it is closer than a normal stack target.
+
+Default is {(Defaults.AUTO_STACK_PREFER_NORMAL_STACK ? "On" : "Off")}");
 
         var autoStackRange = GetValue(config,
              "AutoStackRange",
              "Auto stack range",
-             DEFAULT_AUTO_STACK_RANGE,
+             Defaults.AUTO_STACK_RANGE,
 @$"The maximum range to consider when looking for auto stack targets.
 
 If you use a mod like Stack Further it is best to set this value to the
 same value used in their mod instead of the default.
 
-Default is {DEFAULT_AUTO_STACK_RANGE}");
+Default is {Defaults.AUTO_STACK_RANGE}");
+
 
         var highlightColor = HexToRgb(hex, alpha);
 
@@ -98,6 +118,7 @@ Default is {DEFAULT_AUTO_STACK_RANGE}");
         Instance.HighlightThickness = thickness;
         Instance.HighlightDashed = dashed;
         Instance.EnableForAutoStack = enableForAutoStack;
+        Instance.AutoStackPreferNormalStack = autoStackPreferNormalStack;
         Instance.AutoStackRange = autoStackRange;
 
         config.OnSave = () =>
@@ -123,7 +144,7 @@ Default is {DEFAULT_AUTO_STACK_RANGE}");
     {
         if (hex.Length == 0 || (hex.Length != 7 && hex.Length != 4) || hex[0] != '#')
         {
-            return _defaultColor;
+            return Defaults.HighlightColor;
         }
 
         if (hex.Length == 4)
@@ -142,7 +163,7 @@ Default is {DEFAULT_AUTO_STACK_RANGE}");
         }
         catch
         {
-            return _defaultColor;
+            return Defaults.HighlightColor;
         }
     }
 }
