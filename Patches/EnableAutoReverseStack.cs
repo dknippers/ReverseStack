@@ -27,25 +27,50 @@ public static class EnableAutoReverseStack
         var distanceToNormalStackTarget = (myCard.BounceTarget?.transform.position - myCard.transform.position)?.magnitude;
         var target = __instance.GetNearestCardMatchingPred(myCard, IsNearbyReverseStackTarget);
 
-        if (target is not null && target.MyGameCard is GameCard targetCard)
+        Debug.Log($"Original target of {myCard.GetDebugName()} is {myCard.BounceTarget.GetDebugName()}, distance: {distanceToNormalStackTarget}");
+
+        if (target?.MyGameCard is not GameCard targetCard)
         {
-            Debug.Log($"Set target for {myCard.GetDebugName()} to {targetCard.GetDebugName()}");
-
-            // If our target card itself is traveling to some other card we will set
-            // that as our target too to follow the same trajectery as targetCard
-            if (targetCard.BounceTarget is not null)
-            {
-                Debug.Log($"Update target for {myCard.GetDebugName()} from {targetCard.GetDebugName()} to {targetCard.BounceTarget.GetDebugName()}");
-                targetCard = targetCard.BounceTarget;
-            }
-
-            // Velocity calculation copied from WorldManager.StackSend (line 1718)
-            var vector = targetCard.transform.position - myCard.transform.position;
-            var velocity = new Vector3(vector.x * 4f, 7f, vector.z * 4f);
-
-            myCard.BounceTarget = targetCard;
-            myCard.Velocity = velocity;
+            Debug.Log($"No new target found for {myCard.GetDebugName()}");
+            return;
         }
+
+        Debug.Log($"Set target for {myCard.GetDebugName()} to {targetCard.GetDebugName()}, distance = {(targetCard.transform.position - myCard.transform.position).magnitude}");
+
+        if (!string.IsNullOrEmpty(targetCard.TimerBlueprintId) &&
+            WorldManager.instance.GetBlueprintWithId(targetCard.TimerBlueprintId) is Blueprint blueprint)
+        {
+            Debug.Log(@$"{targetCard.GetDebugName()} has active blueprint: {blueprint.Name}
+Needs exact match: {blueprint.NeedsExactMatch}");
+
+            if (blueprint.Subprints.Count > 0)
+            {
+                int i = 0;
+                foreach (var subprint in blueprint.Subprints)
+                {
+                    Debug.Log(@$"Subprints[{i++}]: {subprint.StatusName}
+RequiredCards: {string.Join(", ", subprint.RequiredCards)}
+CardsToRemove: {string.Join(", ", subprint.CardsToRemove)}
+ExtraResultCards: {string.Join(", ", subprint.ExtraResultCards)}");
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"No active blueprint on {targetCard.GetDebugName()}");
+        }
+
+
+        // If our target card itself is traveling to some other card we will set
+        // that as our target too to follow the same trajectery as targetCard
+        if (targetCard.BounceTarget is not null)
+        {
+            Debug.Log($"Update target for {myCard.GetDebugName()} from {targetCard.GetDebugName()} to {targetCard.BounceTarget.GetDebugName()}");
+            targetCard = targetCard.BounceTarget;
+        }
+
+        myCard.BounceTarget = targetCard;
+        myCard.Velocity = GetVelocity(myCard, targetCard);
 
         bool IsNearbyReverseStackTarget(GameCard other)
         {
@@ -59,13 +84,27 @@ public static class EnableAutoReverseStack
             var distance = vector.magnitude;
 
             if (distance > config.AutoStackRange ||
-                distance > distanceToNormalStackTarget)
+                distance >= distanceToNormalStackTarget)
             {
                 return false;
             }
 
             return true;
         }
+    }
+
+    /// <summary>
+    /// Returns the velocity to use for <paramref name="card"/> when it has to be moved to <paramref name="other"/>.
+    /// </summary>
+    /// <param name="card">Card to move</param>
+    /// <param name="other">Target card</param>
+    /// <returns></returns>
+    private static Vector3 GetVelocity(GameCard card, GameCard other)
+    {
+        var vector = other.transform.position - card.transform.position;
+        // Velocity calculation copied from WorldManager.StackSend (line 1718),
+        // they seem to always use these hardcoded values (4f / 7f / 4f).
+        return new Vector3(vector.x * 4f, 7f, vector.z * 4f);
     }
 
     [HarmonyPrefix]

@@ -85,11 +85,30 @@ public static class GameCardExtensions
     /// <returns></returns>
     public static bool CanAutoReverseStackOn(this GameCard card, GameCard other)
     {
-        // We only allow automatic Reverse Stack when the cards are the same kind (e.g. both an Apple Tree)
-        // This is similar to what the game checks when Cards are bouncing into other cards.
         var leaf = card.GetLeafCard();
         var root = other.GetRootCard();
-        return leaf.IsSamePrefab(root) && leaf.CanReverseStackOn(root);
+
+        return
+            leaf.IsSamePrefab(root) &&
+            !other.IsWorkingOnExactBlueprint() &&
+            leaf.CanReverseStackOn(root);
+    }
+
+    /// <summary>
+    /// Indicates if <paramref name="card"/> is part of a stack that is currently working on a Blueprint
+    /// which needs an exact match of cards to produce its result.
+    /// </summary>
+    /// <param name="card">Card to check</param>
+    /// <returns><c>true</c> if currently working on an exact match blueprint, otherwise <c>false</c></returns>
+    public static bool IsWorkingOnExactBlueprint(this GameCard? card)
+    {
+        if (card?.GetRootCard()?.TimerBlueprintId is not string blueprintId ||
+            string.IsNullOrEmpty(blueprintId))
+        {
+            return false;
+        }
+
+        return WorldManager.instance.GetBlueprintWithId(blueprintId)?.NeedsExactMatch == true;
     }
 
     /// <summary>
@@ -147,12 +166,12 @@ public static class GameCardExtensions
     public static bool IsRoot(this GameCard card) => card.Parent is null;
     public static bool IsLeaf(this GameCard card) => card.Child is null;
 
-    public static string GetName(this GameCard card)
+    public static string GetName(this GameCard? card)
     {
         return card?.CardData?.Name ?? "NULL";
     }
 
-    public static string GetDebugName(this GameCard card)
+    public static string GetDebugName(this GameCard? card)
     {
         if (card is null) return "NULL";
 
