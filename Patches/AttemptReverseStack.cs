@@ -137,10 +137,10 @@ public static class AttemptReverseStack
             return;
         }
 
-        var targetRoot = topCard
-            .GetOverlappingCards()
-            .Select(c => c.GetRootCard())
-            .FirstOrDefault(topCard.CanReverseStackOn);
+        var cards = topCard.GetAllCardsInStack();
+        var (center, size) = GetColliderBox(cards);
+        var overlappingCards = topCard.GetOverlappingCardsInBox(center, size);
+        var targetRoot = FindReverseStackTarget(topCard, overlappingCards);
 
         if (targetRoot is null)
         {
@@ -150,6 +150,39 @@ public static class AttemptReverseStack
         ReverseStackOn(topCard, targetRoot);
 
         __result = true;
+    }
+
+    private static (Vector3 center, Vector3 size) GetColliderBox(IEnumerable<GameCard> cards)
+    {
+        var colliders = cards.Select(c => c.boxCollider).ToArray();
+
+        Vector3 minExtent = colliders[0].bounds.min;
+        Vector3 maxExtent = colliders[0].bounds.max;
+
+        for (int i = 1; i < colliders.Length; i++)
+        {
+            minExtent = Vector3.Min(minExtent, colliders[i].bounds.min);
+            maxExtent = Vector3.Max(maxExtent, colliders[i].bounds.max);
+        }
+
+        Vector3 center = (minExtent + maxExtent) / 2f;
+        Vector3 size = maxExtent - minExtent;
+
+        return (center, size);
+    }
+
+    private static GameCard? FindReverseStackTarget(GameCard subject, List<GameCard> cards)
+    {
+        foreach (var card in cards)
+        {
+            var root = card.GetRootCard();
+            if (subject.CanReverseStackOn(root))
+            {
+                return root;
+            }
+        }
+
+        return null;
     }
 
     private static void ReverseStackOn(GameCard card, GameCard target)

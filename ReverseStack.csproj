@@ -38,6 +38,10 @@
       <HintPath>$(StacklandsDataDir)\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(StacklandsDataDir)\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
 
   <Target Name="ReverseStack_Variables" BeforeTargets="BeforeBuild">
