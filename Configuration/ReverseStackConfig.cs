@@ -12,7 +12,7 @@ public class ReverseStackConfig
 
     public static class Defaults
     {
-        public const string HIGHLIGHT_COLOR = "#000";
+        public const string HIGHLIGHT_COLOR = "#444";
         public const float HIGHLIGHT_ALPHA = 0.8f;
         public const float HIGHLIGHT_THICKNESS = 0.04f;
         public const bool HIGHLIGHT_DASHED = false;
