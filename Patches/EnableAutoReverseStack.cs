@@ -135,24 +135,12 @@ public static class EnableAutoReverseStack
 
         if (bounceTarget.IsDestroyed())
         {
-            __instance.BounceTarget = null;
             Debug.Log($"{bounceTarget.GetDebugName()} is destroyed, sending {__instance.GetDebugName()} to find a new target");
 
+            __instance.BounceTarget = null;
+            __instance.Velocity = null;
             WorldManager.instance.StackSend(__instance);
-
-            // Usually StackSend actually sends the card to its destination but
-            // when the card just Bounced on another card (the child of its original target)
-            // it will go into "sliding mode" and seems to forget about the BounceTarget alltogether.
-            // Since it is not StackSend that takes care of the actual movement -- it only sets the direction using .Velocity --
-            // we will handle the BounceTarget here if it is a Reverse Stack target and immediately do the Reverse Stack rather
-            // than wait for the physics update and Bounce() calls.
-            // If it is a regular stack target we will have to look if that is fixable.
-            if (__instance.BounceTarget is GameCard newTarget &&
-                !newTarget.IsDestroyed())
-            {
-                Debug.Log($"Set new bounce target to {newTarget.GetDebugName()}");
-                bounceTarget = newTarget;
-            }
+            return;
         }
 
         if (__instance.CanAutoReverseStackOn(bounceTarget))
