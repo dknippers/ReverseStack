@@ -72,6 +72,7 @@ public static class GameCardExtensions
             !card.IsDestroyed() &&
             !other.IsDestroyed() &&
             !other.IsEquipped &&
+            !other.BeingDragged &&
             other.Combatable?.InConflict != true &&
             !card.IsSameStack(other) &&
             card.CanHaveOnTop(other);
@@ -93,6 +94,7 @@ public static class GameCardExtensions
         return
             leaf.IsSamePrefab(root) &&
             !other.IsWorkingOnExactBlueprint() &&
+            !other.BeingDragged &&
             leaf.CanReverseStackOn(root);
     }
 
