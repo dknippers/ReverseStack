@@ -95,6 +95,7 @@ public static class GameCardExtensions
             leaf.IsSamePrefab(root) &&
             !other.IsWorkingOnExactBlueprint() &&
             !other.BeingDragged &&
+            !other.CanHaveOnTop(card) && // If it can stack normally we should not auto reverse stack
             leaf.CanReverseStackOn(root);
     }
 
