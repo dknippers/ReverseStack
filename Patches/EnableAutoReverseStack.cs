@@ -27,12 +27,8 @@ public static class EnableAutoReverseStack
         var distanceToNormalStackTarget = (myCard.BounceTarget?.transform.position - myCard.transform.position)?.magnitude;
         var target = __instance.GetNearestCardMatchingPred(myCard, IsNearbyReverseStackTarget);
 
-        Debug.Log($"Original target of {myCard.GetDebugName()} is {myCard.BounceTarget.GetDebugName()}, distance: {distanceToNormalStackTarget}");
-
         if (target?.MyGameCard is not GameCard targetCard)
         {
-            Debug.Log($"No new target found for {myCard.GetDebugName()}");
-
             if (myCard.BounceTarget is not null)
             {
                 SetBounceTarget(myCard, myCard.BounceTarget);
@@ -136,8 +132,6 @@ public static class EnableAutoReverseStack
         {
             return;
         }
-
-        Debug.Log($"Auto RS {__instance.GetDebugName()} On {bounceTarget.GetDebugName()}");
 
         if (__instance.CanAutoReverseStackOn(bounceTarget))
         {

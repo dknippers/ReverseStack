@@ -127,19 +127,18 @@ public static class GameCardExtensions
             return;
         }
 
-        // We do not want to move the target stack that we are Reverse Stacking onto.
-        // By default when adding a card onto a stack on the board the stack that was being dragged will snap onto
-        // the stack that is on the board.
-        // Technically since we perform a Reverse Stack operation the card we are dragging is considered
-        // the stack on the board and the stack that was actually on the board will be moved to snap onto the stack being dragged.
-        // To fix this issue we first update the position of the stack being dragged to the position of the stack we drag onto.
         var cardLeaf = card.GetLeafCard();
         var cardRoot = card.GetRootCard();
         var targetRoot = target.GetRootCard();
 
-        Debug.Log($"RS {cardLeaf.GetDebugName()} On {targetRoot.GetDebugName()}");
-
+        // When we Reverse Stack `card` on `target` what actually happens is `target` will be stacked on top of `card`.
+        // When stacking A on B the game will keep B's position static and move A to fit underneath B but in our case
+        // that would mean the game will move target towards card's position.
+        // We actually want target to maintain its position because the user is dragging card at the moment, not target.
+        // To achieve this we set the position of card's root card to the target's root card's position.
         cardRoot.SetPosition(targetRoot.transform.position);
+
+        Debug.Log($"RS {cardLeaf.GetDebugName()} On {targetRoot.GetDebugName()}");
         targetRoot.SetParent(cardLeaf);
 
         AudioManager.me.PlaySound2D(AudioManager.me.DropOnStack, UnityEngine.Random.Range(0.8f, 1.2f), 0.3f);
