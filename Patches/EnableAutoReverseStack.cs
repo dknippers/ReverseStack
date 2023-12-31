@@ -132,7 +132,7 @@ public static class EnableAutoReverseStack
 
         var bounceTarget = __state;
 
-        if (__instance is null || bounceTarget is null || __instance.HasParent || __instance.Velocity is null)
+        if (__instance is null || bounceTarget is null || bounceTarget.IsDestroyed() || __instance.HasParent || __instance.Velocity is null)
         {
             return;
         }

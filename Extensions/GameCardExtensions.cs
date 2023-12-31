@@ -69,6 +69,8 @@ public static class GameCardExtensions
     public static bool CanReverseStackOn(this GameCard card, GameCard other)
     {
         return
+            !card.IsDestroyed() &&
+            !other.IsDestroyed() &&
             !other.IsEquipped &&
             other.Combatable?.InConflict != true &&
             !card.IsSameStack(other) &&
@@ -120,6 +122,11 @@ public static class GameCardExtensions
     /// <param name="target">Card to Reverse Stack onto</param>
     public static void ReverseStackOn(this GameCard card, GameCard target)
     {
+        if (card.IsDestroyed() || target.IsDestroyed())
+        {
+            return;
+        }
+
         // We do not want to move the target stack that we are Reverse Stacking onto.
         // By default when adding a card onto a stack on the board the stack that was being dragged will snap onto
         // the stack that is on the board.
@@ -137,6 +144,14 @@ public static class GameCardExtensions
 
         AudioManager.me.PlaySound2D(AudioManager.me.DropOnStack, UnityEngine.Random.Range(0.8f, 1.2f), 0.3f);
     }
+
+    /// <summary>
+    /// Indicates if this <paramref name="card"/> has been destroyed.
+    /// </summary>
+    /// <param name="card">Card</param>
+    /// <returns><c>true</c> if this <see cref="GameCard"/> has been destroyed, otherwise <c>false</c></returns>
+    public static bool IsDestroyed(this GameCard? card) =>
+        card is null || card.GetInstanceID() == 0;
 
     /// <summary>
     /// Instantly sets the position of <paramref name="card"/> to the given <paramref name="position"/>.
