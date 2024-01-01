@@ -8,7 +8,7 @@ namespace StackToBottom.Patches;
 
 /// <summary>
 /// Highlight targets that the currently dragged card can be stacked to the bottom of.
-/// For an explanation of what stack to bottom is see <see cref="EnableStackToBottomOnDrag"/>.
+/// For an explanation of what stack to bottom is see <see cref="EnableStackToBottom"/>.
 /// </summary>
 [HarmonyPatch]
 public static class HighlightStackToBottomTargets

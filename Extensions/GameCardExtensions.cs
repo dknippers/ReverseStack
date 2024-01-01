@@ -79,44 +79,6 @@ public static class GameCardExtensions
     }
 
     /// <summary>
-    /// Indicates if <paramref name="card"/> can be stacked to the bottom of <paramref name="other"/> automatically,
-    /// i.e. whether <paramref name="other"/> can be stacked on top of <paramref name="card"/> without the user performing a drag operation.
-    /// This occurs for example when a Card is produced by a <see cref="Harvestable"/> or created in some other way.
-    /// </summary>
-    /// <param name="card">Card</param>
-    /// <param name="other">Other card</param>
-    /// <returns></returns>
-    public static bool CanAutoStackToBottomOf(this GameCard card, GameCard other)
-    {
-        var leaf = card.GetLeafCard();
-        var root = other.GetRootCard();
-
-        return
-            leaf.IsSamePrefab(root) &&
-            !other.IsWorkingOnExactBlueprint() &&
-            !other.BeingDragged &&
-            !other.CanHaveOnTop(card) && // If it can stack on top we should not auto stack to bottom
-            leaf.CanStackToBottomOf(root);
-    }
-
-    /// <summary>
-    /// Indicates if <paramref name="card"/> is part of a stack that is currently working on a Blueprint
-    /// which needs an exact match of cards to produce its result.
-    /// </summary>
-    /// <param name="card">Card to check</param>
-    /// <returns><c>true</c> if currently working on an exact match blueprint, otherwise <c>false</c></returns>
-    public static bool IsWorkingOnExactBlueprint(this GameCard? card)
-    {
-        if (card?.GetRootCard()?.TimerBlueprintId is not string blueprintId ||
-            string.IsNullOrEmpty(blueprintId))
-        {
-            return false;
-        }
-
-        return WorldManager.instance.GetBlueprintWithId(blueprintId)?.NeedsExactMatch == true;
-    }
-
-    /// <summary>
     /// Stacks <paramref name="card"/> to the bottom of <paramref name="target"/>.
     /// Note this method just performs the bottom stack without checking whether it is possible.
     /// Caller should ensure this using <see cref="CanStackToBottomOf(GameCard, GameCard)"/>.
