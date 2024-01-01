@@ -1,7 +1,7 @@
 using System.Text;
 using UnityEngine;
 
-namespace ReverseStack.Extensions;
+namespace StackToBottom.Extensions;
 public static class GameCardExtensions
 {
     /// <summary>
@@ -60,13 +60,13 @@ public static class GameCardExtensions
     }
 
     /// <summary>
-    /// Indicates if <paramref name="card"/> allows a Reverse Stack operation with <paramref name="other"/>,
+    /// Indicates if <paramref name="card"/> can be stacked to the bottom of <paramref name="other"/>,
     /// i.e. whether <paramref name="other"/> can be stacked on top of <paramref name="card"/>.
     /// </summary>
     /// <param name="card">Card</param>
     /// <param name="other">Other card</param>
     /// <returns></returns>
-    public static bool CanReverseStackOn(this GameCard card, GameCard other)
+    public static bool CanStackToBottomOf(this GameCard card, GameCard other)
     {
         return
             !card.IsDestroyed() &&
@@ -79,14 +79,14 @@ public static class GameCardExtensions
     }
 
     /// <summary>
-    /// Indicates if <paramref name="card"/> allows an automatic Reverse Stack operation with <paramref name="other"/>,
+    /// Indicates if <paramref name="card"/> can be stacked to the bottom of <paramref name="other"/> automatically,
     /// i.e. whether <paramref name="other"/> can be stacked on top of <paramref name="card"/> without the user performing a drag operation.
     /// This occurs for example when a Card is produced by a <see cref="Harvestable"/> or created in some other way.
     /// </summary>
     /// <param name="card">Card</param>
     /// <param name="other">Other card</param>
     /// <returns></returns>
-    public static bool CanAutoReverseStackOn(this GameCard card, GameCard other)
+    public static bool CanAutoStackToBottomOf(this GameCard card, GameCard other)
     {
         var leaf = card.GetLeafCard();
         var root = other.GetRootCard();
@@ -95,8 +95,8 @@ public static class GameCardExtensions
             leaf.IsSamePrefab(root) &&
             !other.IsWorkingOnExactBlueprint() &&
             !other.BeingDragged &&
-            !other.CanHaveOnTop(card) && // If it can stack normally we should not auto reverse stack
-            leaf.CanReverseStackOn(root);
+            !other.CanHaveOnTop(card) && // If it can stack on top we should not auto stack to bottom
+            leaf.CanStackToBottomOf(root);
     }
 
     /// <summary>
@@ -117,13 +117,13 @@ public static class GameCardExtensions
     }
 
     /// <summary>
-    /// Reverse stacks <paramref name="card"/> onto <paramref name="target"/>.
-    /// Note this method just performs the Reverse Stack without checking whether it is possible.
-    /// Caller should ensure this using <see cref="CanReverseStackOn(GameCard, GameCard)"/>.
+    /// Stacks <paramref name="card"/> to the bottom of <paramref name="target"/>.
+    /// Note this method just performs the bottom stack without checking whether it is possible.
+    /// Caller should ensure this using <see cref="CanStackToBottomOf(GameCard, GameCard)"/>.
     /// </summary>
-    /// <param name="card">Card to Reverse Stack</param>
-    /// <param name="target">Card to Reverse Stack onto</param>
-    public static void ReverseStackOn(this GameCard card, GameCard target)
+    /// <param name="card">Card to stack to bottom of another stack</param>
+    /// <param name="target">Target stack for bottom stack operation</param>
+    public static void StackToBottomOf(this GameCard card, GameCard target)
     {
         if (card.IsDestroyed() || target.IsDestroyed())
         {
@@ -134,7 +134,7 @@ public static class GameCardExtensions
         var cardRoot = card.GetRootCard();
         var targetRoot = target.GetRootCard();
 
-        // When we Reverse Stack `card` on `target` what actually happens is `target` will be stacked on top of `card`.
+        // When we stack `card` to the bottom of `target` what actually happens is `target` will be stacked on top of `card`.
         // When stacking A on B the game will keep B's position static and move A to fit underneath B but in our case
         // that would mean the game will move target towards card's position.
         // We actually want target to maintain its position because the user is dragging card at the moment, not target.

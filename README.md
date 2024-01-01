@@ -1,4 +1,4 @@
-# ReverseStack
+# StackToBottom
 
 A Stacklands mod that enables stacking cards to the bottom of an existing stack rather than the top.
 
@@ -10,5 +10,5 @@ on top of the Villager.
 The game already allows this operation manually if you move the Villager stack on top of the new card, this mod simply makes it
 more user friendly by making this happen whenever stacking on top is not possible.
 
-Note this never allows an illegal stack to be created, any stack created by a Reverse Stack is possible to create manually.
-Basically, when dragging stack A on top of stack B a Reverse Stack in that situation is equivalent to stacking B on top of A.
+Note this never allows an illegal stack to be created, any stack created by stacking to the bottom is possible to create manually.
+Basically, when dragging stack A on top of stack B a stack to bottom in that situation is equivalent to stacking B on top of A.

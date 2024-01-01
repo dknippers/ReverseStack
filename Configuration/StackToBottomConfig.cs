@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 
-namespace ReverseStack.Configuration;
+namespace StackToBottom.Configuration;
 
-public class ReverseStackConfig
+public class StackToBottomConfig
 {
     /// <summary>
     /// On change handler, <paramref name="updatedConfig"/> is the same instance as <see cref="OnChange"/> was called on but with updated values.
     /// </summary>
     /// <param name="updatedConfig">The same config instance but with updated values</param>
-    public delegate void OnChangeHandler(ReverseStackConfig updatedConfig);
+    public delegate void OnChangeHandler(StackToBottomConfig updatedConfig);
 
     public static class Defaults
     {
@@ -16,29 +16,22 @@ public class ReverseStackConfig
         public const float HIGHLIGHT_ALPHA = 0.8f;
         public const float HIGHLIGHT_THICKNESS = 0.04f;
         public const bool HIGHLIGHT_DASHED = false;
-        public const bool ENABLE_FOR_AUTO_STACK = true;
-        public const bool AUTO_STACK_PREFER_NORMAL_STACK = false;
-        public const float AUTO_STACK_RANGE = 2.0f;
         public static readonly Color HighlightColor = new(0, 0, 0, HIGHLIGHT_ALPHA);
     }
 
-    private ReverseStackConfig() { }
+    private StackToBottomConfig() { }
 
-    public static ReverseStackConfig? Instance { get; private set; }
+    public static StackToBottomConfig? Instance { get; private set; }
 
     public Color HighlightColor { get; private set; }
     public float HighlightThickness { get; private set; }
     public bool HighlightDashed { get; private set; }
 
-    public bool EnableForAutoStack { get; private set; }
-    public bool AutoStackPreferNormalStack { get; private set; }
-    public float AutoStackRange { get; private set; }
-
     public event OnChangeHandler? OnChange;
 
-    internal static ReverseStackConfig Init(ConfigFile config)
+    internal static StackToBottomConfig Init(ConfigFile config)
     {
-        Instance ??= new ReverseStackConfig();
+        Instance ??= new StackToBottomConfig();
 
         var hex = GetValue(config,
             "HighlightColor",
@@ -73,53 +66,11 @@ Default is {Defaults.HIGHLIGHT_THICKNESS}");
 
 Default is {(Defaults.HIGHLIGHT_DASHED ? "On" : "Off")}");
 
-        var enableForAutoStack = GetValue(config,
-             "EnableForAutoStack",
-             "Enable for auto stack",
-             Defaults.ENABLE_FOR_AUTO_STACK,
-@$"Enable Reverse Stack whenever the game attempts to automatically stack a card,
-for example when a card is spawned after harvesting among many other situations.
-
-In addition to the default game logic of looking for stacks to stack on top of we
-will also check for any Reverse Stack targets and use them if they are closer.
-
-Default is {(Defaults.ENABLE_FOR_AUTO_STACK ? "On" : "Off")}");
-
-        var autoStackPreferNormalStack = GetValue(config,
-             "AutoStackPreferNormalStack",
-             "Prefer normal stack\nin auto stack",
-             Defaults.AUTO_STACK_PREFER_NORMAL_STACK,
-@$"If turned On a normal stack always has priority during auto stacking cards,
-i.e. if the game finds a valid stack target we will not attempt to find a Reverse Stack
-target even if there might be one closer to the card to stack.
-
-Only if the game finds no normal stack target we will look for a Reverse Stack target.
-
-If turned Off we will always look for a Reverse Stack target but only use it
-when it is closer than a normal stack target.
-
-Default is {(Defaults.AUTO_STACK_PREFER_NORMAL_STACK ? "On" : "Off")}");
-
-        var autoStackRange = GetValue(config,
-             "AutoStackRange",
-             "Auto stack range",
-             Defaults.AUTO_STACK_RANGE,
-@$"The maximum range to consider when looking for auto stack targets.
-
-If you use a mod like Stack Further it is best to set this value to the
-same value used in their mod instead of the default.
-
-Default is {Defaults.AUTO_STACK_RANGE}");
-
-
         var highlightColor = HexToRgb(hex, alpha);
 
         Instance.HighlightColor = highlightColor;
         Instance.HighlightThickness = thickness;
         Instance.HighlightDashed = dashed;
-        Instance.EnableForAutoStack = enableForAutoStack;
-        Instance.AutoStackPreferNormalStack = autoStackPreferNormalStack;
-        Instance.AutoStackRange = autoStackRange;
 
         config.OnSave = () =>
         {

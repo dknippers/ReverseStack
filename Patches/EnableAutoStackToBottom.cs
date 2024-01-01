@@ -1,18 +1,18 @@
 using HarmonyLib;
-using ReverseStack.Configuration;
-using ReverseStack.Extensions;
+using StackToBottom.Configuration;
+using StackToBottom.Extensions;
 using UnityEngine;
 
-namespace ReverseStack.Patches;
+namespace StackToBottom.Patches;
 
 [HarmonyPatch]
-public static class EnableAutoReverseStack
+public static class EnableAutoStackToBottom
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.StackSend))]
     public static void WorldManager_StackSend(GameCard myCard, WorldManager __instance)
     {
-        if (ReverseStackConfig.Instance is not ReverseStackConfig config ||
+        if (StackToBottomConfig.Instance is not StackToBottomConfig config ||
             !config.EnableForAutoStack ||
             config.AutoStackRange <= 0f)
         {
@@ -25,7 +25,7 @@ public static class EnableAutoReverseStack
         }
 
         var distanceToNormalStackTarget = (myCard.BounceTarget?.transform.position - myCard.transform.position)?.magnitude;
-        var target = __instance.GetNearestCardMatchingPred(myCard, IsNearbyReverseStackTarget);
+        var target = __instance.GetNearestCardMatchingPred(myCard, IsNearbyStackToBottomTarget);
 
         if (target?.MyGameCard is not GameCard targetCard)
         {
@@ -39,10 +39,10 @@ public static class EnableAutoReverseStack
 
         SetBounceTarget(myCard, targetCard);
 
-        bool IsNearbyReverseStackTarget(GameCard other)
+        bool IsNearbyStackToBottomTarget(GameCard other)
         {
             if (!other.IsRoot() ||
-                !myCard.CanAutoReverseStackOn(other))
+                !myCard.CanAutoStackToBottomOf(other))
             {
                 return false;
             }
@@ -101,7 +101,7 @@ public static class EnableAutoReverseStack
     [HarmonyPatch(typeof(GameCard), "Bounce")]
     public static void GameCard_Bounce_Prefix(GameCard __instance, out GameCard? __state)
     {
-        if (ReverseStackConfig.Instance?.EnableForAutoStack == false)
+        if (StackToBottomConfig.Instance?.EnableForAutoStack == false)
         {
             __state = null;
             return;
@@ -114,7 +114,7 @@ public static class EnableAutoReverseStack
     [HarmonyPatch(typeof(GameCard), "Bounce")]
     public static void GameCard_Bounce(GameCard __instance, GameCard? __state)
     {
-        if (ReverseStackConfig.Instance?.EnableForAutoStack == false)
+        if (StackToBottomConfig.Instance?.EnableForAutoStack == false)
         {
             return;
         }
@@ -134,9 +134,9 @@ public static class EnableAutoReverseStack
             return;
         }
 
-        if (__instance.CanAutoReverseStackOn(bounceTarget))
+        if (__instance.CanAutoStackToBottomOf(bounceTarget))
         {
-            __instance.ReverseStackOn(bounceTarget);
+            __instance.StackToBottomOf(bounceTarget);
             __instance.Velocity = null;
             __instance.BounceTarget = null;
         }

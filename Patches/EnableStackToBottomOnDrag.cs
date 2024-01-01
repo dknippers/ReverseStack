@@ -1,11 +1,11 @@
 using HarmonyLib;
-using ReverseStack.Extensions;
+using StackToBottom.Extensions;
 using UnityEngine;
 
-namespace ReverseStack.Patches;
+namespace StackToBottom.Patches;
 
 /// <summary>
-/// When dragging a stack X that cannot be stacked on top of a stack Y this patch will attempt the reverse: stack Y on top of X.
+/// When dragging a stack X that cannot be stacked on top of a stack Y this patch will attempt to stack X to the bottom of Y.
 ///
 /// This is especially useful when stack Y contains a Villager harvesting cards such as Apple Trees and does not allow any
 /// cards being stacked on top of it, but it can itself be stacked on top of another stack.
@@ -30,7 +30,7 @@ namespace ReverseStack.Patches;
 /// which is what the user would want in this case.
 /// </summary>
 [HarmonyPatch]
-public static class EnableReverseStackOnDrag
+public static class EnableStackToBottomOnDrag
 {
     [HarmonyPostfix]
     [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.CheckIfCanAddOnStack))]
@@ -48,7 +48,7 @@ public static class EnableReverseStackOnDrag
             return;
         }
 
-        topCard.ReverseStackOn(targetRoot);
+        topCard.StackToBottomOf(targetRoot);
 
         __result = true;
     }
@@ -63,7 +63,7 @@ public static class EnableReverseStackOnDrag
         {
             var root = oc.GetRootCard();
 
-            if (card.CanReverseStackOn(root))
+            if (card.CanStackToBottomOf(root))
             {
                 return root;
             }

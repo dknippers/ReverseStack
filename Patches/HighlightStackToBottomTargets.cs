@@ -1,17 +1,17 @@
 using HarmonyLib;
-using ReverseStack.Configuration;
-using ReverseStack.Extensions;
 using Shapes;
+using StackToBottom.Configuration;
+using StackToBottom.Extensions;
 using UnityEngine;
 
-namespace ReverseStack.Patches;
+namespace StackToBottom.Patches;
 
 /// <summary>
-/// Highlight targets for a Reverse Stack operation while dragging.
-/// For an explanation of a Reverse Stack see <see cref="EnableReverseStackOnDrag"/>.
+/// Highlight targets that the currently dragged card can be stacked to the bottom of.
+/// For an explanation of what stack to bottom is see <see cref="EnableStackToBottomOnDrag"/>.
 /// </summary>
 [HarmonyPatch]
-public static class HighlightReverseStackTargets
+public static class HighlightStackToBottomTargets
 {
     public static HighlightValues Original = null!;
     public static HighlightValues Modified = null!;
@@ -25,7 +25,7 @@ public static class HighlightReverseStackTargets
         if (WorldManager.instance.DraggingCard is not GameCard draggingCard ||
             !card.IsRoot() ||
             card.CanHaveOnTop(draggingCard) ||
-            !draggingCard.CanReverseStackOn(card))
+            !draggingCard.CanStackToBottomOf(card))
         {
             if (!Original.IsApplied(card.HighlightRectangle))
             {
@@ -35,14 +35,14 @@ public static class HighlightReverseStackTargets
             return;
         }
 
-        // Reverse Stack highlight
+        // StackToBottom highlight
         card.HighlightActive = true;
         card.HighlightRectangle.enabled = true;
 
         Modified.Apply(card.HighlightRectangle);
     }
 
-    internal static void Init(ReverseStackConfig config, Rectangle rect)
+    internal static void Init(StackToBottomConfig config, Rectangle rect)
     {
         Original = new HighlightValues(rect.Dashed, rect.CornerRadius, rect.Thickness, rect.Width, rect.Height, rect.Color);
 
@@ -51,7 +51,7 @@ public static class HighlightReverseStackTargets
         config.OnChange += cfg => UpdateModified(cfg, Original);
     }
 
-    private static void UpdateModified(ReverseStackConfig config, HighlightValues original)
+    private static void UpdateModified(StackToBottomConfig config, HighlightValues original)
     {
         const float CORNER_RADIUS = 0.01f;
         const float OFFSET = -0.014f;
