@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyName>StackToBottom</AssemblyName>
@@ -54,5 +54,6 @@
     <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="icon.png" DestinationFolder="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="manifest.json" DestinationFolder="$(StacklandsLocalModDir)" />
+    <Copy SourceFiles="workshop.txt" DestinationFolder="$(StacklandsLocalModDir)" />
   </Target>
 </Project>
