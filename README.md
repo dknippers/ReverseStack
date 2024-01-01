@@ -1,14 +1,13 @@
-# StackToBottom
+# Stack To Bottom
 
-A Stacklands mod that enables stacking cards to the bottom of an existing stack rather than the top.
+![icon](icon.png?raw=true "icon")
+
+A Stacklands mod that stacks cards to the bottom of another stack rather than to the top when stacking on top is not possible.
 
 This is mainly useful to add cards to stacks that are being worked on by a Villager, e.g. Apple Trees and Berry Bushes.
 
-With this mod you can now simply drag the new card to the existing stack and it will be added to the bottom since it cannot be added
-on top of the Villager.
+Note this will never create an illegal stack of cards. Stacking X to the bottom of Y is always possible manually in the base game
+by dragging Y on top of X instead.
 
-The game already allows this operation manually if you move the Villager stack on top of the new card, this mod simply makes it
-more user friendly by making this happen whenever stacking on top is not possible.
-
-Note this never allows an illegal stack to be created, any stack created by stacking to the bottom is possible to create manually.
-Basically, when dragging stack A on top of stack B a stack to bottom in that situation is equivalent to stacking B on top of A.
+This mod simply makes the process more convenient when you start with X you do not need to put it down, grab Y and drag it on top of X but
+instead just stacks X to the bottom of Y when you drop it on top of Y.
