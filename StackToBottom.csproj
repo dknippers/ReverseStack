@@ -52,6 +52,7 @@
   <Target Name="StackToBottom_CopyToLocalModDirectory" AfterTargets="AfterBuild">
     <MakeDir Directories="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(StacklandsLocalModDir)" />
+    <Copy SourceFiles="icon.png" DestinationFolder="$(StacklandsLocalModDir)" />
     <Copy SourceFiles="manifest.json" DestinationFolder="$(StacklandsLocalModDir)" />
   </Target>
 </Project>
