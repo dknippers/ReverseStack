@@ -141,7 +141,6 @@ public static class GameCardExtensions
         // To achieve this we set the position of card's root card to the target's root card's position.
         cardRoot.SetPosition(targetRoot.transform.position);
 
-        Debug.Log($"RS {cardLeaf.GetDebugName()} On {targetRoot.GetDebugName()}");
         targetRoot.SetParent(cardLeaf);
 
         AudioManager.me.PlaySound2D(AudioManager.me.DropOnStack, UnityEngine.Random.Range(0.8f, 1.2f), 0.3f);

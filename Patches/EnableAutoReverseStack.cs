@@ -37,8 +37,6 @@ public static class EnableAutoReverseStack
             return;
         }
 
-        Debug.Log($"Set target for {myCard.GetDebugName()} to {targetCard.GetDebugName()}, distance = {(targetCard.transform.position - myCard.transform.position).magnitude}");
-
         SetBounceTarget(myCard, targetCard);
 
         bool IsNearbyReverseStackTarget(GameCard other)
@@ -65,11 +63,6 @@ public static class EnableAutoReverseStack
     private static void SetBounceTarget(GameCard card, GameCard target)
     {
         var finalTarget = GetFinalBounceTarget(target);
-
-        if (finalTarget != target)
-        {
-            Debug.Log($"Update target for {card.GetDebugName()} from {target.GetDebugName()} to {finalTarget.GetDebugName()}");
-        }
 
         card.BounceTarget = finalTarget;
         card.Velocity = GetVelocity(card, finalTarget);
@@ -135,8 +128,6 @@ public static class EnableAutoReverseStack
 
         if (bounceTarget.IsDestroyed())
         {
-            Debug.Log($"{bounceTarget.GetDebugName()} is destroyed, sending {__instance.GetDebugName()} to find a new target");
-
             __instance.BounceTarget = null;
             __instance.Velocity = null;
             WorldManager.instance.StackSend(__instance);
