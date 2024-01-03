@@ -4,7 +4,7 @@ using StackToBottom.Patches;
 
 namespace StackToBottom;
 
-public partial class StackToBottom : Mod
+public class StackToBottom : Mod
 {
     public override void Ready()
     {

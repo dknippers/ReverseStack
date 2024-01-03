@@ -23,6 +23,7 @@ public static class HighlightStackToBottomTargets
         if (__instance is not GameCard card || card.HighlightActive) return;
 
         if (WorldManager.instance.DraggingCard is not GameCard draggingCard ||
+            ReferenceEquals(card, draggingCard) ||
             !card.IsRoot() ||
             card.CanHaveOnTop(draggingCard) ||
             !draggingCard.CanStackToBottomOf(card))

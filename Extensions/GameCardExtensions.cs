@@ -72,8 +72,8 @@ public static class GameCardExtensions
             !card.IsDestroyed() &&
             !other.IsDestroyed() &&
             !other.IsEquipped &&
-            !other.BeingDragged &&
             other.Combatable?.InConflict != true &&
+            other.CanBeDragged() &&
             !card.IsSameStack(other) &&
             card.CanHaveOnTop(other);
     }
