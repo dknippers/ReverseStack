@@ -75,6 +75,7 @@ public static class GameCardExtensions
             other.Combatable?.InConflict != true &&
             other.CanBeDragged() &&
             !card.IsSameStack(other) &&
+            !other.IsWorkingOnExactBlueprint() &&
             card.CanHaveOnTop(other);
     }
 
@@ -160,5 +161,22 @@ public static class GameCardExtensions
             .Append(' ')
             .Append(card.GetName())
             .ToString();
+    }
+
+    /// <summary>
+    /// Indicates if <paramref name="card"/> is part of a stack that is currently working on a Blueprint
+    /// which needs an exact match of cards to produce its result.
+    /// </summary>
+    /// <param name="card">Card to check</param>
+    /// <returns><c>true</c> if currently working on an exact match blueprint, otherwise <c>false</c></returns>
+    public static bool IsWorkingOnExactBlueprint(this GameCard? card)
+    {
+        if (card?.GetRootCard()?.TimerBlueprintId is not string blueprintId ||
+            string.IsNullOrEmpty(blueprintId))
+        {
+            return false;
+        }
+
+        return WorldManager.instance.GetBlueprintWithId(blueprintId)?.NeedsExactMatch == true;
     }
 }
