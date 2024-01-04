@@ -36,19 +36,21 @@ public static class EnableStackToBottomOnDrag
     [HarmonyPatch(typeof(WorldManager), nameof(WorldManager.CheckIfCanAddOnStack))]
     public static void WorldManager_CheckIfCanAddOnStack(GameCard topCard, ref bool __result)
     {
-        if (__result || topCard?.CardData is null)
+        if (__result ||
+            WorldManager.instance.DraggingCard is not GameCard draggingCard ||
+            !ReferenceEquals(draggingCard, topCard))
         {
             return;
         }
 
-        var targetRoot = FindOverlappingTarget(topCard);
+        var targetRoot = FindOverlappingTarget(draggingCard);
 
         if (targetRoot is null)
         {
             return;
         }
 
-        topCard.StackToBottomOf(targetRoot);
+        draggingCard.StackToBottomOf(targetRoot);
 
         __result = true;
     }
