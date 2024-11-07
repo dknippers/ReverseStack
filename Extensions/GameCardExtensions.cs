@@ -1,4 +1,3 @@
-using System.Text;
 using UnityEngine;
 
 namespace StackToBottom.Extensions;
@@ -150,19 +149,6 @@ public static class GameCardExtensions
     public static string GetName(this GameCard? card)
     {
         return card?.CardData?.Name ?? "NULL";
-    }
-
-    public static string GetDebugName(this GameCard? card)
-    {
-        if (card is null) return "NULL";
-
-        return new StringBuilder()
-            .Append('[')
-            .Append(Math.Abs(card.GetInstanceID()))
-            .Append(']')
-            .Append(' ')
-            .Append(card.GetName())
-            .ToString();
     }
 
     /// <summary>
