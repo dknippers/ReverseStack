@@ -12,14 +12,20 @@ namespace StackToBottom.Patches;
 [HarmonyPatch]
 public static class FixStacklands2000HighlightOutsideOfCities
 {
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Worker), "UpdateCard")]
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Worker), nameof(Worker.UpdateCard))]
     public static void Worker_UpdateCard(Worker __instance)
     {
-        if (WorldManager.instance.CurrentBoard?.Location != Location.Cities &&
-            __instance.MyGameCard is GameCard card)
+        if (__instance?.MyGameCard is not GameCard card ||
+            WorldManager.instance?.CurrentBoard is not GameBoard board ||
+            board.Location == Location.Cities ||
+            card.IsDemoCard ||
+            card.MyBoard?.IsCurrent != true)
         {
-            card.HighlightActive = false;
+            return;
         };
+
+        // This is usually done by CardData.UpdateCard() but Worker does not call this outside of the Cities
+        card.HighlightActive = false;
     }
 }
